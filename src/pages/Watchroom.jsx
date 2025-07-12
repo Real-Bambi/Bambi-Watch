@@ -1,9 +1,17 @@
-export default function Watchroom() {
+import YouTubePlayer from "../components/YoutubePlayer";
+
+
+
+function Watchroom() {
+  const videoId = "dQw4w9WgXcQ"; // Replace with your own YouTube video ID
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1 className="text-4xl font-bold mb-4">Watchroom</h1>
-      <p className="text-lg text-gray-700">Welcome to the Watchroom!</p>
-      <p className="text-sm text-gray-500 mt-2">This is where you can monitor your activities.</p>
+    <div>
+      <h1>Watch Room: Movie Night</h1>
+      <YouTubePlayer videoId={videoId} />
     </div>
   );
 }
+
+export default Watchroom;
+
