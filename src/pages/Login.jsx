@@ -1,13 +1,47 @@
+import Goodbg from "../assets/loginin.jpg";
+import { Link } from "react-router";
+
 export default function Login() {
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-            <h1 className="text-4xl font-bold mb-4">Login</h1>
-            <p className="text-lg text-gray-700">Please enter your credentials to login.</p>
-            <div className="mt-4">
-                <input type="text" placeholder="Username" className="border p-2 rounded mr-2" />
-                <input type="password" placeholder="Password" className="border p-2 rounded" />
+        <>
+            <div className=" bg-cover bg-center h-screen flex justify-center items-center"
+                style={{ backgroundImage: `url(${Goodbg})` }}>
+                <div className=" bg-[rgba(255,255,255,0.2)] bg-cover bg-center h-[80vh] w-[90%]  shadow-[0_20px_50px_rgba(0,0,0,0.6)] flex flex-row"
+                    >
+
+                    <div className="w-[40%] flex justify-center items-center ml-[10%]">
+                        <form action="" className=" p-8 rounded-xl w-full text-white">
+                            <div className="flex flex-col justify-center text-center pb-4">
+                                <p className="font-bold  text-3xl">Watch Together</p>
+                                <p className="font-bold  text-lg text-gray-400">Watch movies with friends, anywhere</p></div>
+                            <div className="flex flex-col pb-4 ">
+                                <label htmlFor="username"> Username </label>
+                                <input type="text" placeholder="Enter your username" className=" border border-[rgba(255,255,255,0.4)] p-2 rounded-md " />
+                            </div>
+                            <div className="flex flex-col pb-4">
+                                <label htmlFor="email"> Email </label>
+                                <input type="email" placeholder="Enter your email" className="  border border-[rgba(255,255,255,0.4)] p-2 rounded-md" />
+                            </div>
+                            <div className="flex flex-col pb-4">
+                                <label htmlFor="password"> Password </label>
+                                <input type="password" placeholder="Enter your password" className="border border-[rgba(255,255,255,0.4)] p-2 rounded-md" />
+                            </div>
+
+                            <button type="submit" className="p-2 w-full rounded-md border bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">Login</button>
+
+                        </form>
+                    </div>
+
+                    <div className="w-[50%] flex flex-col justify-center items-center  bg-[rgba(0,0,0,0.5)] ">
+                        <p className="text-white font-bold text-5xl">Welcome back!</p>
+                        <p className="flex justify-center text-center pt-6 text-2xl text-white italic">Don't have an account?
+                            <Link to="/sign-up" className="text-purple-500 font-semibold hover:underline ml-2">Sign Up
+                            </Link>
+                        </p>
+                    </div>
+                </div>
             </div>
-            <button className="bg-blue-500 text-white py-2 px-4 rounded mt-4">Login</button>
-        </div>
+
+        </>
     )
 }
