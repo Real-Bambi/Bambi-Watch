@@ -12,8 +12,8 @@ export default function Navbar() {
   return (
    <div className="flex flex-row justify-between items-center p-2">
     <div className="flex flex-row">
-      <Play />
-      <h1 className=" text-lg md:text-2xl font-bold">BambiWatch</h1>
+      <Play className="bg-[#9333EA] rounded"/>
+      <h1 className=" text-lg md:text-2xl  font-bold">BambiWatch</h1>
     </div>
     {/* Desktop Menu */}
     <div className="hidden md:flex flex-row justify-between gap-6">
