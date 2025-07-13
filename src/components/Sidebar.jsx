@@ -9,7 +9,7 @@ function Sidebar() {
         <div className="w-10 h-10 bg-purple-500 rounded flex items-center justify-center text-white mr-2">
           <FaPlay className="w-6 h-6" />
         </div>
-        <h1 className="text-2xl font-bold text-gray-800">Bambi Watch</h1>
+       <Link to="/"><h1 className="text-2xl font-bold text-gray-800">Bambi Watch</h1></Link>
       </div>
       <nav className="space-y-2">
         <Link
