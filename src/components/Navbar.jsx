@@ -11,8 +11,10 @@ export default function Navbar() {
 
   return (
    <div className="flex flex-row justify-between items-center p-2">
-    <div className="flex flex-row">
-      <Play className="bg-[#9333EA] rounded"/>
+    <div className="flex items-center gap-2">
+     <div className="bg-[#9333EA] p-1.5 rounded">
+       <Play className="w-5 h-5 text-white"/>
+     </div>
       <h1 className=" text-lg md:text-2xl  font-bold">BambiWatch</h1>
     </div>
     {/* Desktop Menu */}
