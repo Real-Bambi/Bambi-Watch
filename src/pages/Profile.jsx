@@ -1,7 +1,10 @@
-import { UsersIcon, FilmIcon, Clock, Camera, History, Play, UserPlus, Star } from "lucide-react";
+import { UsersIcon, FilmIcon, Clock, Camera, History, Play, UserPlus, Star, Clapperboard } from "lucide-react";
 import Navbar from "../components/Navbar";
-import UserImage from '../assets/userid.jpg'
-
+import UserImage from '../assets/userid.jpg';
+import Movie1Image from '../assets/movie1.jpg';
+import Movie2Image from '../assets/movie2.jpg';
+import Movie3Image from '../assets/movie3.jpg';
+import Footer from "../components/Footer";
 
 
 
@@ -10,7 +13,7 @@ export default function Profile() {
   return (
 
     <div className="bg-[#0F172A]">
-     <div className="text-white">
+     <div className="text-white ">
        <Navbar  />
      </div>
       <div className="flex flex-row bg-gradient-to-r from-purple-600 to-cyan-500 justify-between items-center mt-10 rounded-xl p-6  w-[90%] mx-auto shadow-md ">
@@ -42,20 +45,20 @@ export default function Profile() {
           </div>
         </div>
         <div>
-          <button className="bg-white px-6 py-2 m-4 rounded text-[#4F84E7]">Edit Profile</button>
+          <button className="bg-white px-6 py-2 m-4 rounded text-[#4F84E7] hover:text-blue-950">Edit Profile</button>
         </div>
       </div>
-      <section className="bg-[#1E293B] flex flex-col justify-between gap-5 w-[90%] mx-auto mt-10 rounded">
-        <div className="flex items-center gap-2 p-4">
+      <section className="bg-[#1E293B] flex flex-col justify-between gap-5 w-[90%] mx-auto mt-10 rounded p-4">
+        <div className="flex items-center gap-2 p-2">
           <History className="text-[#9333EA]" />
-          <h1 className="text-white text-xl">Recent Activity</h1>
+          <h1 className="text-white text-2xl">Recent Activity</h1>
         </div>
         <div className="bg-[#0F172A] w-[90%] mx-auto flex items-center gap-2 p-2 rounded">
         <div className="bg-[#9333EA] p-1.5 rounded">
             <Play  className="w-5 h-5 "/>
         </div>
         <div className="text-white">
-          <h2>Watched "The Matrix with Sarah and Mike" </h2>
+          <h2>Watched "Faults in Our Stars" </h2>
           <p>2 Hours</p>
         </div>
         </div>
@@ -64,8 +67,8 @@ export default function Profile() {
            <UserPlus className="w-5 h-5 "/>
          </div>
         <div className="text-white">
-          <h2>Watched "The Matrix with Sarah and Mike" </h2>
-          <p>2 Hours</p>
+          <h2>Added Emma to friend list </h2>
+          <p>1 day ago</p>
         </div>
         </div>
         <div className="bg-[#0F172A] w-[90%] mx-auto flex items-center gap-2 p-2 rounded">
@@ -73,11 +76,41 @@ export default function Profile() {
            <Star  className="w-5 h-5 "/>
        </div>
         <div className="text-white">
-          <h2>Watched "The Matrix with Sarah and Mike" </h2>
-          <p>2 Hours</p>
+          <h2>Rated 'Now You See Me' 5 stars </h2>
+          <p>3 days ago</p>
         </div>
         </div>
       </section>
+      <section className="bg-[#1E293B] p-4 w-[90%] mx-auto mt-8">
+    <div className="flex items-center gap-2 text-white p-2">
+      <Clapperboard className= "text-[#9333EA] " />
+      <h2 className="font-bold text-xl ">Recently watched</h2>
+    </div>
+    <div className="flex items-center justify-center pt-6 gap-10 w-[90%] mx-auto text-white">
+      <div className="w-64 rounded-lg overflow-hidden shadow-md">
+        <img src={Movie1Image} alt="" className="w-full h-96 object-cover" />
+      <div className="p-4">
+          <h2 className=" font-bold text-lg text-white ">Faults in Our Stars</h2>
+        <p className="text-sm text-gray-600">Romance . 2014</p>
+      </div>
+      </div>
+      <div className="w-64 rounded-lg overflow-hidden shadow-md ">
+        <img src={Movie2Image} alt="" className="w-64 object-cover h-96" />
+     <div className="p-4">
+         <h2 className="font-bold text-lg text-white">Kpop Demon Hunter</h2>
+        <p className="text-sm text-gray-600">Animation . 2025</p>
+     </div>
+      </div>
+      <div className="w-64 rounded-lg overflow-hidden shadow-md ">
+        <img src={Movie3Image} alt="" className="w-full object-cover h-96" />
+        <div className="p-4">
+          <h2 className="font-bold text-lg text-white">Now You See Me</h2>
+        <p className="text-sm text-gray-600">Thriller . 2013</p>
+        </div>
+      </div>
+    </div>
+      </section>
+      <Footer />
     </div>
   );
 }

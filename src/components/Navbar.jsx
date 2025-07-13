@@ -12,31 +12,31 @@ export default function Navbar() {
   return (
    <div className="flex flex-row justify-between items-center p-2">
     <div className="flex items-center gap-2">
-     <div className="bg-[#9333EA] p-1.5 rounded">
-       <Play className="w-5 h-5 text-white"/>
+     <div className="bg-[#9333EA] p-1.5 rounded animate-bounce">
+       <Play className="w-5 h-5 text-white "/>
      </div>
-      <h1 className=" text-lg md:text-2xl  font-bold">BambiWatch</h1>
+      <h1 className=" text-lg md:text-2xl  font-bold hover:text-[#9333EA]">BambiWatch</h1>
     </div>
     {/* Desktop Menu */}
     <div className="hidden md:flex flex-row justify-between gap-6">
-    <Link to={'#'}>Home</Link>
-    <Link to={'#'}>About</Link>
-    <Link to={'#'}>Reviews</Link>
-    <Link to={'#'}>Contact</Link>
+    <Link to={'#'} className="hover:text-[#9333EA]">Home</Link>
+    <Link to={'#'} className="hover:text-[#9333EA]">About</Link>
+    <Link to={'#'} className="hover:text-[#9333EA]">Reviews</Link>
+    <Link to={'#'} className="hover:text-[#9333EA]">Contact</Link>
     </div>
-
+ 
     {/* Mobile Menu */}
     {mobileMenu && (
     <div className=" md:hidden flex flex-col bg-white justify-between gap-6 fixed top-12 right-0">
-    <Link to={'#'}>Home</Link>
-    <Link to={'#'}>About</Link>
-    <Link to={'#'}>Reviews</Link>
-    <Link to={'#'}>Contact</Link>
+    <Link to={'#'} className="hover:text-[#9333EA]">Home</Link>
+    <Link to={'#'} className="hover:text-[#9333EA]">About</Link>
+    <Link to={'#'}className="hover:text-[#9333EA]">Reviews</Link>
+    <Link to={'#'} className="hover:text-[#9333EA]">Contact</Link>
     </div>
     )}
     <div className="flex justify-between gap-2 items-center">
-      <Link to={'#'}>Sign In</Link>
-      <Link to={'#'}><button className="bg-[#9333EA] px-6 py-1.5  text-white rounded-xl">Get Started</button></Link>
+      <Link to={'#'} className="hover:text-[#9333EA]">Sign In</Link>
+      <Link to={'#'}><button className="bg-[#9333EA] hover:bg-purple-500 px-6 py-1.5  text-white rounded-xl cursor-pointer">Get Started</button></Link>
     </div>
 
     {/* Menu Icon */}
