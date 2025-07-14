@@ -3,11 +3,15 @@ import { Users, CircleChevronRight } from "lucide-react";
 import Hero from "../assets/herobg2.jpg"
 import Wavy from "../assets/aboutpic4.jpg"
 import Love from "../assets/aboutpic1.jpg"
+import Face from "../assets/sec41.jpg"
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 
 export default function Home() {
   return (
     <>
+      <Navbar />
       {/* Hero Section */}
       <section
         className="bg-cover bg-center bg-no-repeat w-full h-[100vh]"
@@ -62,19 +66,19 @@ export default function Home() {
           <p className="text-[#4B5563] text-lg">Our mission is to eliminate the barriers of distance and bring people together through shared entertainment. Whether you're separated by miles or continents, SyncWatch ensures that every laugh, gasp, and tear is shared simultaneously.</p>
 
           <div className="grid grid-cols-2 mt-10 ">
-            <div className="w-[70%] h-[20vh] flex flex-col justify-center items-center border border-[#B3B2AC] rounded-2xl hover:bg-white shadow-2xl mb-10">
+            <div className="w-[70%] h-[20vh] flex flex-col justify-center items-center border border-[#B3B2AC] rounded-2xl hover:bg-white shadow-2xl mb-10 transition-all duration-300 hover:translate-y-2 hover:translate-x-2">
               <p className="font-bold text-purple-500 text-2xl ">1M+</p>
               <p>Watch Parties</p>
             </div>
-            <div className="w-[70%] h-[20vh] flex flex-col justify-center items-center border border-[#B3B2AC] rounded-2xl hover:bg-white shadow-2xl mb-10">
+            <div className="w-[70%] h-[20vh] flex flex-col justify-center items-center border border-[#B3B2AC] rounded-2xl hover:bg-white shadow-2xl mb-10 transition-all duration-300 hover:translate-y-2 hover:translate-x-2">
               <p className="font-bold text-purple-500 text-2xl ">50K+</p>
               <p>Active Users</p>
             </div>
-            <div className="w-[70%] h-[20vh] flex flex-col justify-center items-center border border-[#B3B2AC] rounded-2xl hover:bg-white shadow-2xl">
+            <div className="w-[70%] h-[20vh] flex flex-col justify-center items-center border border-[#B3B2AC] rounded-2xl hover:bg-white shadow-2xl transition-all duration-300 hover:translate-y-2 hover:translate-x-2">
               <p className="font-bold text-purple-500 text-2xl ">99.9%</p>
               <p>Uptime</p>
             </div>
-            <div className="w-[70%] h-[20vh] flex flex-col justify-center items-center border border-[#B3B2AC] rounded-2xl hover:bg-white shadow-2xl">
+            <div className="w-[70%] h-[20vh] flex flex-col justify-center items-center border border-[#B3B2AC] rounded-2xl hover:bg-white shadow-2xl transition-all duration-300 hover:translate-y-2 hover:translate-x-2">
               <p className="font-bold text-purple-500 text-2xl ">4.9★</p>
               <p>User Rating</p>
             </div>
@@ -92,7 +96,7 @@ export default function Home() {
               alt="meeting image"
               className="w-[80%] rounded-xl shadow-lg"
             />
-            <div className="absolute bottom-6 -left-10 flex items-center bg-white p-4 rounded-lg shadow-md gap-4">
+            <div className="absolute bottom-6 -left-10 flex items-center bg-white p-4 rounded-lg shadow-md gap-4 transition-all duration-300 hover:-translate-y-2 hover:translate-x-2">
               <Heart className="text-purple-500 w-12 h-12" />
               <div className="flex flex-col text-left">
                 <p className="font-semibold text-gray-800">Built with Love</p>
@@ -104,7 +108,63 @@ export default function Home() {
 
       </section>
 
+      {/* Fourth Section*/}
+      <section className="h-[70vh] ">
+        <div className="flex flex-col justify-center items-center my-10 mb-20">
+          <p className="text-3xl font-medium">What Our  <span className="text-purple-500 italic">Users Say♪⁕</span></p>
+          <p className="text-lg text-gray-500"> <span className="text-purple-500 font-bold">—</span>Join thousands of happy users who've made SyncWatch their go-to platform</p>
+        </div>
 
+        <div className="grid grid-cols-3 m-6 ">
+          <div className="h-[35vh] w-[90%] p-2 border border-[#B3B2AC] bg-[#f0efeb] rounded-2xl">
+            <div className="flex flex-row gap-10  ">
+              <img src={Face} alt="face" className="rounded-4xl w-20 h-16" />
+              <div className="flex flex-col pb-4">
+                <p className="font-bold">Sandra Blake</p>
+                <p className="text-gray-500">CEO, Digital Agency</p>
+                <p className="text-purple-500 font-bold text-xl">★★★★★5.0 </p>
+              </div>
+              <p className="text-4xl text-purple-600"> ❤️  </p>
+            </div>
+            <div>
+              <p>"SyncWatch has been a game-changer for our family movie nights!
+                <br /> My kids are in college now, but we still watch movies together every Friday. <br /> It feels like we're all in the same room."</p>
+            </div>
+
+          </div>
+          <div className="h-[35vh] w-[90%] p-2 border border-[#B3B2AC] bg-[#f0efeb] rounded-2xl">
+            <div className="flex flex-row gap-10  ">
+              <img src={Face} alt="face" className="rounded-4xl w-20 h-16" />
+              <div className="flex flex-col pb-4">
+                <p className="font-bold">Mike Chen</p>
+                <p className="text-gray-500">Software Engineer</p>
+                <p className="text-purple-500 font-bold text-xl">★★★★★5.0 </p>
+              </div>
+              <p className="text-4xl text-purple-600"> ❤️  </p>
+            </div>
+            <div>
+              <p>"Perfect for long-distance relationships! <br />My girlfriend and I use SyncWatch every weekend. The chat feature <br /> makes it feel like we're cuddling on the couch together."</p>
+            </div>
+
+          </div>
+          <div className="h-[35vh] w-[90%] p-2 border border-[#B3B2AC] bg-[#f0efeb] rounded-2xl">
+            <div className="flex flex-row gap-10  ">
+              <img src={Face} alt="face" className="rounded-4xl w-20 h-16" />
+              <div className="flex flex-col pb-4">
+                <p className="font-bold">Emma Rodriguez</p>
+                <p className="text-gray-500">Marketing Manager</p>
+                <p className="text-purple-500 font-bold text-xl">★★★★★5.0 </p>
+              </div>
+              <p className="text-4xl text-purple-600"> ❤️  </p>
+            </div>
+            <div>
+              <p>"Our friend group scattered across different cities after college, <br /> but SyncWatch keeps us connected. <br /> We have weekly movie nights that feel just like old times!"</p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+      <Footer />
     </>
   );
 }
