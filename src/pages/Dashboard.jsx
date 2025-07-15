@@ -92,7 +92,7 @@ function Dashboard() {
 
         {/* Active Rooms */}
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-800">Active Rooms</h2>
+          <h2 className="text-xl font-semibold text-gray-800">Watched Rooms</h2>
           <Link to="/all-rooms" className="text-purple-600 hover:text-purple-800 transition duration-200">View All</Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
