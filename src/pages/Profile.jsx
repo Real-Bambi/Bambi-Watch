@@ -13,10 +13,10 @@ export default function Profile() {
   return (
 
     <div className="bg-[#0F172A]">
-     <div className="text-white ">
-       <Navbar  />
-     </div>
-      <div className="flex flex-row bg-gradient-to-r from-purple-600 to-cyan-500 justify-between items-center mt-10 rounded-xl p-6  w-[90%] mx-auto shadow-md ">
+     
+       <Navbar   />
+     
+      <div className="flex flex-col md:flex-row bg-gradient-to-r from-purple-600 to-cyan-500 justify-between items-center mt-10 rounded-xl p-6  w-[90%] mx-auto shadow-md ">
         <div className="flex items-center gap-6">
           <div className="relative" >
            <img src={UserImage} alt="User Id" className="w-20 h-20 rounded-full object-cover border border-white shadow-md" />
@@ -28,10 +28,7 @@ export default function Profile() {
           <div className="flex flex-col text-white ">
             <h2 className="font-bold text-lg">Alex Johnson</h2>
             <p className="">Movie enthusiast & binge watcher extraordinare</p>
-            <div className="flex flex-row justify-between gap-5 p-2">
-              <span className="flex flex-row ">
-                <UsersIcon />
-                <p>127 friends</p></span>
+            <div className="flex flex-col md:flex-row  gap-2 p-2">
               <span className="flex flex-row">
                 <FilmIcon  />
                 <p>89 Movies watched</p>
@@ -62,15 +59,7 @@ export default function Profile() {
           <p>2 Hours</p>
         </div>
         </div>
-        <div className="bg-[#0F172A] w-[90%] mx-auto flex items-center gap-2 p-2 rounded">
-         <div className="bg-[#0D364C] p-1.5 rounded">
-           <UserPlus className="w-5 h-5 "/>
-         </div>
-        <div className="text-white">
-          <h2>Added Emma to friend list </h2>
-          <p>1 day ago</p>
-        </div>
-        </div>
+
         <div className="bg-[#0F172A] w-[90%] mx-auto flex items-center gap-2 p-2 rounded">
        <div className="bg-[#9333EA] p-1.5  rounded">
            <Star  className="w-5 h-5 "/>
@@ -86,7 +75,7 @@ export default function Profile() {
       <Clapperboard className= "text-[#9333EA] " />
       <h2 className="font-bold text-xl ">Recently watched</h2>
     </div>
-    <div className="flex items-center justify-center pt-6 gap-10 w-[90%] mx-auto text-white">
+    <div className="flex flex-col md:flex-row items-center justify-center pt-6 gap-10 w-[90%] mx-auto text-white">
       <div className="w-64 rounded-lg overflow-hidden shadow-md">
         <img src={Movie1Image} alt="" className="w-full h-96 object-cover" />
       <div className="p-4">
