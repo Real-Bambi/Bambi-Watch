@@ -1,6 +1,6 @@
 import { UsersIcon, FilmIcon, Clock, Camera, History, Play, UserPlus, Star, Clapperboard } from "lucide-react";
 import Navbar from "../components/Navbar";
-import UserImage from '../assets/userid.jpg';
+import UserImage from '../assets/userid.avif';
 import Movie1Image from '../assets/movie1.jpg';
 import Movie2Image from '../assets/movie2.jpg';
 import Movie3Image from '../assets/movie3.jpg';
