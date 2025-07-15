@@ -16,7 +16,7 @@ const bambiWatchRouter = createBrowserRouter([
   { path: "/dashboard", element: <Dashboard /> },
   { path: "/profile", element: <Profile /> },
   { path: "/watchroom", element: <Watchroom /> },
-  { path: "*", element: <Error /> }
+  { path: "*", element: <Error /> },
 ]);
 
 function App() {
