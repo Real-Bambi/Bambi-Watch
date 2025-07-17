@@ -106,58 +106,59 @@ export default function Profile() {
 
 
 
-// import { UsersIcon, FilmIcon, Clock } from 'lucide-react';
-// import Navbar from './Navbar';
+// {isModalOpen && (
+//         <div
+//           className="fixed inset-0  bg-opacity-50 flex justify-center items-center z-50 p-4"
+//           onClick={closeModal}
+//         >
 
-// export default function ProfileCard() {
-//   return (
-//     <div>
-//       <Navbar />
+//           <div
+//             className="bg-white text-gray-800 rounded-lg shadow-xl w-full max-w-md p-6 relative"
+//             onClick={(e) => e.stopPropagation()}
+//           >
+            
+//             <button onClick={closeModal} className="absolute top-2 right-2 text-gray-600 hover:text-gray-900 transition-colors">
+//               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+//                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+//               </svg>
+//             </button>
 
-//       <div className="flex justify-between items-center w-[90%] mx-auto mt-10 p-6 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-500 text-white shadow-md">
-        
-//         {/* Profile Section */}
-//         <div className="flex items-center gap-6">
-//           {/* Profile Image */}
-//           <div className="relative">
-//             <img
-//               src="https://randomuser.me/api/portraits/men/75.jpg"
-//               alt="Profile"
-//               className="w-20 h-20 rounded-full border-4 border-white shadow-md object-cover"
-//             />
-//             {/* Optional camera icon overlay */}
-//             <div className="absolute bottom-0 right-0 w-5 h-5 bg-white rounded-full flex items-center justify-center">
-//               <input type="file" accept="image/*" className="opacity-0 absolute w-full h-full cursor-pointer" />
-//               <span className="text-xs text-black">📷</span>
+//             <h2 className="text-2xl font-bold mb-4">Invite Friends</h2>
+//             <div className="mb-6">
+//               <label className="block text-sm font-medium mb-2">
+//                 Copy link below
+//               </label>
+//               <div className="flex items-center space-x-2">
+//                 <input type="text" readOnly value={roomLink} className="flex-1 border-gray-500 bg-blue-100 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+//                 <button onClick={handleCopyLink} className="bg-blue-600 text-white p-2 rounded-lg font-medium hover:bg-blue-700 transition-colors relative">  {isCopied ? (
+//                     <span className="absolute -top-6 left-1/2 -translate-x-1/2 bg-green-500 text-white text-xs px-2 py-1 rounded-full whitespace-nowrap">Copied!</span>  ) : null}
+//                   <Copy className="h-5 w-5" /> 
+//                 </button>
+//               </div>
 //             </div>
-//           </div>
 
-//           {/* Profile Info */}
-//           <div>
-//             <h2 className="text-xl font-bold">Alex Johnson</h2>
-//             <p className="text-sm">Movie enthusiast & binge-watcher extraordinaire</p>
-//             <div className="flex gap-6 text-sm mt-2">
-//               <span className="flex items-center gap-1">
-//                 <UsersIcon className="w-4 h-4" />
-//                 127 Friends
-//               </span>
-//               <span className="flex items-center gap-1">
-//                 <FilmIcon className="w-4 h-4" />
-//                 89 Movies Watched
-//               </span>
-//               <span className="flex items-center gap-1">
-//                 <Clock className="w-4 h-4" />
-//                 342 Hours
-//               </span>
+//             <div>
+//               <p className="text-sm font-medium mb-2">Or share on social media</p>
+//               <div className="flex items-center space-x-4">
+  
+//                 <button className="bg-blue-500 text-white rounded-full p-2 hover:bg-blue-600 transition-colors">
+//                   <Facebook className="h-5 w-5" />
+//                 </button>
+//                 <button className="bg-pink-500 text-white rounded-full p-2 hover:bg-pink-600 transition-colors">
+//                   <Instagram className="h-5 w-5" />
+//                 </button>
+//                 <button className="bg-blue-400 text-white rounded-full p-2 hover:bg-blue-500 transition-colors">
+                 
+//                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+//                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 6l-7 7-7-7" />
+//                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l7-7-7-7" />
+//                   </svg>
+//                 </button>
+//                 <button className="bg-green-500 text-white rounded-full p-2 hover:bg-green-600 transition-colors">
+//                   <Mail className="h-5 w-5" />
+//                 </button>
+//               </div>
 //             </div>
 //           </div>
 //         </div>
-
-//         {/* Edit Button */}
-//         <button className="bg-white text-purple-700 font-medium px-4 py-2 rounded-md shadow-md hover:bg-gray-100">
-//           Edit Profile
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
+//       )}
