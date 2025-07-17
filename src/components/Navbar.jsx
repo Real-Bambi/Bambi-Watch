@@ -22,7 +22,7 @@ export default function Navbar() {
 
     {/* Desktop Menu */}
     <div className="hidden md:flex text-black flex-row z-50 justify-between gap-6">
-    <Link to={'#'} className="hover:text-[#9333EA]">Home</Link>
+    <Link to={'/'} className="hover:text-[#9333EA]">Home</Link>
     <Link to={'#'} className="hover:text-[#9333EA]">About</Link>
     <Link to={'#'} className="hover:text-[#9333EA]">Reviews</Link>
     <Link to={'#'} className="hover:text-[#9333EA]">Contact</Link>
