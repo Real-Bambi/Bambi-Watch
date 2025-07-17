@@ -14,7 +14,7 @@ export default function Home() {
       <Navbar />
       {/* Hero Section */}
       <section
-        className="bg-cover bg-center bg-no-repeat w-full h-[100vh]"
+        className="bg-cover bg-center bg-no-repeat  w-full h-[100vh]"
         style={{ backgroundImage: `url(${Hero})` }}>
         <div className="text-white w-[40%] flex flex-col space-y-6 p-12">
           <p className="text-6xl font-bold">Watch Movies Together,Even <br /> Apart</p>

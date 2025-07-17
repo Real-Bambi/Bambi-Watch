@@ -5,11 +5,60 @@ import Movie1Image from '../assets/movie1.jpg';
 import Movie2Image from '../assets/movie2.jpg';
 import Movie3Image from '../assets/movie3.jpg';
 import Footer from "../components/Footer";
+import { useEffect, useState } from "react";
+import { apiClient } from "../../api/client";
 
 
 
 
 export default function Profile() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [avatar, setAvatar] = useState(null);
+  const [bio, setBio] = useState("");
+
+
+
+   const FetchUser = async () => {
+    try {
+      const respond = await apiClient.get('users/me')
+      setAvatar(respond.data.avatarUrl);
+      setBio(respond.data.bio);
+    } catch (error){
+      console.log(error)
+    }
+  }
+  
+  useEffect(() => {
+    FetchUser();
+  }, []);
+
+  const OpenModal = () => setIsModalOpen(true);
+  const CloseModal = () => setIsModalOpen(false);
+  
+ 
+
+
+
+
+  const postUser = async (data) => {
+    try {
+      const response = await apiClient.patch('users/me', data, {
+        method: 'PATCH',
+        headers: {
+          "Content-Type": 'application/json'
+        }
+      });
+      console.log(response)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
+
+
+
+
   return (
 
     <div className="bg-[#0F172A]">
@@ -42,9 +91,38 @@ export default function Profile() {
           </div>
         </div>
         <div>
-          <button className="bg-white px-6 py-2 m-4 rounded text-[#4F84E7] hover:text-blue-950">Edit Profile</button>
+          <button className="bg-white px-6 py-2 m-4 rounded text-[#4F84E7] hover:text-blue-950" onClick={OpenModal}>Edit Profile</button>
         </div>
       </div>
+
+      {isModalOpen && (
+  <div
+    className="fixed inset-0 bg-gradient-to-br from-purple-400 to-white bg-opacity-60 backdrop-blur-sm flex justify-center items-center z-50"
+    onClick={CloseModal}
+  >
+    <div
+      className="bg-white p-8 rounded-2xl shadow-lg max-w-md w-full"
+      onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
+    >
+            {/* This is the modal content  */}
+            <form action={postUser} className="flex flex-col gap-5 ">
+              <h2 className="text-xl font-semibold text-purple-700 ">Update Profile</h2>
+              <input type="file"
+                accept="image/*"
+                name="avatarUrl"
+                id="avatarUrl"
+               onChange={(e) => setAvatar(e.target.files[0])}
+                className="w-full px-4 py-2 bg-white rounded border border-[#9333EA]"
+                placeholder="Update avatar" />
+              <textarea name="bio" id="bio" placeholder="Update your bio..." value={bio}
+  onChange={(e) => setBio(e.target.value)} className="w-full h-32 px-4 py-2 bg-white border border-[#9333EA] resize-none"></textarea>
+              <button type="button" className="px-6 py-2 text-white bg-[#9333EA] font-medium rounded" onClick={CloseModal} >Done</button>
+            </form>
+      
+    </div>
+  </div>
+)}
+    
       <section className="bg-[#1E293B] flex flex-col justify-between gap-5 w-[90%] mx-auto mt-10 rounded p-4">
         <div className="flex items-center gap-2 p-2">
           <History className="text-[#9333EA]" />

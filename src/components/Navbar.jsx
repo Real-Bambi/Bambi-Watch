@@ -11,7 +11,7 @@ export default function Navbar() {
 
   return (
   <div className="relative">
-     <div className="flex flex-row justify-between items-center p-2 bg-white shadow-md">
+     <div className="flex flex-row justify-between fixed top-0 left-0 right-0 items-center p-2 bg-white shadow-md">
     <div className="flex items-center gap-2">
      <div className="bg-[#9333EA] p-1.5 rounded ">
        <Play className="w-5 h-5 text-white "/>
