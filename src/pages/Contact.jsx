@@ -4,6 +4,7 @@ import { FaFacebook, FaTwitter, FaInstagram, FaEnvelope } from 'react-icons/fa';
 function ContactPage() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
   const validate = () => {
@@ -15,7 +16,7 @@ function ContactPage() {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
@@ -23,10 +24,28 @@ function ContactPage() {
       return;
     }
 
-    setSuccess(true);
-    setFormData({ name: '', email: '', message: '' });
-    setErrors({});
-    setTimeout(() => setSuccess(false), 6000);
+    setLoading(true);
+    try {
+      const response = await fetch('https://formspree.io/f/xzzgnzrp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setSuccess(true);
+        setFormData({ name: '', email: '', message: '' });
+        setErrors({});
+        setTimeout(() => setSuccess(false), 6000);
+      } else {
+        alert('Something went wrong. Please try again later.');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('There was an error submitting the form. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -45,6 +64,18 @@ function ContactPage() {
           }
           .animate-slide-in {
             animation: slide-in 0.4s ease-out;
+          }
+          .spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            animation: spin 0.8s linear infinite;
+          }
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
           }
         `}
       </style>
@@ -93,9 +124,10 @@ function ContactPage() {
 
           <button
             type="submit"
-            className="w-full bg-purple-700 text-white py-3 rounded-md font-semibold hover:bg-purple-800 transition"
+            disabled={loading}
+            className="w-full bg-purple-700 text-white py-3 rounded-md font-semibold hover:bg-purple-800 transition flex justify-center items-center"
           >
-            Send Message
+            {loading ? <div className="spinner"></div> : 'Send Message'}
           </button>
         </form>
 
@@ -118,7 +150,6 @@ function ContactPage() {
         </div>
       </div>
 
-      {/* ✅ Success Popup - now top right */}
       {success && (
         <div className="fixed top-6 right-6 bg-green-600 text-white px-5 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-slide-in">
           ✅ Message sent successfully!
