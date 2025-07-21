@@ -4,37 +4,39 @@ import useSWR from 'swr';
 import { FaBell, FaSearch, FaPlayCircle, FaDoorOpen } from 'react-icons/fa';
 import Sidebar from '../components/Sidebar';
 import CreateRoomModal from '../components/CreateRoomModal';
+import { apiClient } from '../../api/client';
 
 const fetcher = (url) =>
-  fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('bambi_token')}`,
-    },
-  }).then((res) => res.json());
+  apiClient
+    .get(url, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('bambi_token')}`,
+      },
+    })
+    .then((res) => res.data);
+
+// Helper function to extract YouTube video ID
+const getYouTubeVideoId = (url) => {
+  const regex = /(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([^&?/]+)/;
+  const match = url.match(regex);
+  return match ? match[1] : '';
+};
 
 function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
 
-  const { data: userData, error: userError } = useSWR(
-    'https://bambi-watch-api.onrender.com/api/v1/users/me',
-    fetcher
-  );
-
-  const { data, error, isLoading } = useSWR(
-    'https://bambi-watch-api.onrender.com/api/v1/rooms/active',
-    fetcher
-  );
+  const { data: userData } = useSWR('/users/me', fetcher);
+  const { data, error, isLoading } = useSWR('/rooms/active', fetcher);
 
   const activeRooms = data?.rooms || [];
   const username = userData?.data?.username || 'Guest';
   const profileImg = userData?.data?.avatar || 'https://via.placeholder.com/40';
 
   const yourVideos = [
-    { id: 1, title: 'My Vlog #1', image: 'https://via.placeholder.com/300x200?text=Vlog+1' },
-    { id: 2, title: 'React Tutorial', image: 'https://via.placeholder.com/300x200?text=React+Tutorial' },
-    { id: 3, title: 'Behind The Scenes', image: 'https://via.placeholder.com/300x200?text=Behind+Scenes' },
+    { id: 1, title: 'Reason to start coding', image: 'https://www.youtube.com/shorts/yETfkVksrxA' },
+    { id: 2, title: 'AniRoll', image: 'https://www.youtube.com/watch?v=n4K1xMdRRWY' },
+    { id: 3, title: 'Become a full-stack developer', image: 'https://www.youtube.com/shorts/nnG-DHWvTWM' },
   ];
 
   return (
@@ -139,20 +141,33 @@ function Dashboard() {
           )}
         </section>
 
+        {/* Your Videos with clickable thumbnails */}
         <section className="p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">Your Videos</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {yourVideos.map((video) => (
-              <div
-                key={video.id}
-                className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition"
-              >
-                <img src={video.image} alt={video.title} className="w-full h-48 object-cover" />
-                <div className="p-4">
-                  <h3 className="font-semibold text-lg text-gray-800">{video.title}</h3>
-                </div>
-              </div>
-            ))}
+            {yourVideos.map((video) => {
+              const videoId = getYouTubeVideoId(video.image);
+              const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+              const watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
+              return (
+                <a
+                  key={video.id}
+                  href={watchUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition hover:scale-105"
+                >
+                  <img
+                    src={thumbnailUrl}
+                    alt={video.title}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="p-4">
+                    <h3 className="font-semibold text-lg text-gray-800">{video.title}</h3>
+                  </div>
+                </a>
+              );
+            })}
           </div>
         </section>
 

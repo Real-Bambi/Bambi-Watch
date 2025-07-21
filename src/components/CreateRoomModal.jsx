@@ -1,34 +1,30 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import useSWRMutation from 'swr/mutation';
+import { apiClient } from '../../api/client';
 
 function CreateRoomModal({ isOpen, onClose }) {
   const [roomName, setRoomName] = useState('');
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const navigate = useNavigate();
 
+  // This handles the API request using your axios client
   const createRoomRequest = async (url, { arg }) => {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(arg),
+    const token = localStorage.getItem('bambi_token');
+    const response = await apiClient.post(url, arg, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
-    if (!response.ok) {
-      throw new Error('Failed to create room');
-    }
-    return response.json();
+    return response.data;
   };
 
-  const { trigger, isMutating } = useSWRMutation(
-    'https://bambi-watch-api.onrender.com/api/v1/rooms',
-    createRoomRequest
-  );
+  const { trigger, isMutating } = useSWRMutation('/rooms', createRoomRequest);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const data = await trigger({ roomName, youtubeUrl });
-      console.log(data);
       if (data && data.roomId) {
         navigate(`/watchroom/${data.roomId}`);
       } else {
@@ -36,7 +32,7 @@ function CreateRoomModal({ isOpen, onClose }) {
       }
       onClose();
     } catch (error) {
-      console.error(error);
+      console.error('Error creating room:', error);
     }
   };
 
@@ -44,8 +40,14 @@ function CreateRoomModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg relative">
+        {isMutating && (
+          <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10">
+            <div className="w-10 h-10 border-4 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 relative z-20">
           <input
             type="text"
             value={roomName}
