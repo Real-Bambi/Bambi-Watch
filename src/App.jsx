@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Watchroom from "./pages/Watchroom";
 import Error from "./pages/Error";
+import Contact from "./pages/Contact";
 
 const bambiWatchRouter = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -16,7 +17,8 @@ const bambiWatchRouter = createBrowserRouter([
   { path: "/dashboard", element: <Dashboard /> },
   { path: "/profile", element: <Profile /> },
   { path: "/watchroom", element: <Watchroom /> },
-  { path: "*", element: <Error /> }
+  { path: "/contact", element: <Contact /> },
+  { path: "*", element: <Error /> },
 ]);
 
 function App() {

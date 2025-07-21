@@ -10,16 +10,19 @@ export default function Navbar() {
 
 
   return (
-   <div className="flex flex-row justify-between items-center p-2">
+  <div className="relative z-10">
+     <div className="flex flex-row justify-between fixed top-0 left-0 right-0 items-center p-2 bg-white shadow-md">
     <div className="flex items-center gap-2">
-     <div className="bg-[#9333EA] p-1.5 rounded animate-bounce">
+     <div className="bg-[#9333EA] p-1.5 rounded ">
        <Play className="w-5 h-5 text-white "/>
      </div>
       <h1 className=" text-lg md:text-2xl  font-bold hover:text-[#9333EA]">BambiWatch</h1>
     </div>
+
+
     {/* Desktop Menu */}
-    <div className="hidden md:flex flex-row justify-between gap-6">
-    <Link to={'#'} className="hover:text-[#9333EA]">Home</Link>
+    <div className="hidden md:flex text-black flex-row z-50 justify-between gap-6">
+    <Link to={'/'} className="hover:text-[#9333EA]">Home</Link>
     <Link to={'#'} className="hover:text-[#9333EA]">About</Link>
     <Link to={'#'} className="hover:text-[#9333EA]">Reviews</Link>
     <Link to={'#'} className="hover:text-[#9333EA]">Contact</Link>
@@ -27,22 +30,25 @@ export default function Navbar() {
  
     {/* Mobile Menu */}
     {mobileMenu && (
-    <div className=" md:hidden flex flex-col bg-white justify-between gap-6 fixed top-12 right-0">
+    <div className=" md:hidden absolute flex flex-col  justify-between gap-4 px-6 py-4 text-black shadow-md z-50  top-full left-0 w-full bg-white">
     <Link to={'#'} className="hover:text-[#9333EA]">Home</Link>
     <Link to={'#'} className="hover:text-[#9333EA]">About</Link>
     <Link to={'#'}className="hover:text-[#9333EA]">Reviews</Link>
     <Link to={'#'} className="hover:text-[#9333EA]">Contact</Link>
     </div>
     )}
-    <div className="flex justify-between gap-2 items-center">
+    <div className="flex justify-between gap-2  text-black items-center">
       <Link to={'#'} className="hover:text-[#9333EA]">Sign In</Link>
       <Link to={'#'}><button className="bg-[#9333EA] hover:bg-purple-500 px-6 py-1.5  text-white rounded-xl cursor-pointer">Get Started</button></Link>
     </div>
 
     {/* Menu Icon */}
     <div className="md:hidden" >
-      <button className="md:hidden " onClick={() =>setMobileMenu(!mobileMenu)}> {mobileMenu ? <X /> : <Menu />}</button>
+      <button className="md:hidden " onClick={() =>setMobileMenu(!mobileMenu)}> {mobileMenu ? <X className="text-black" /> : <Menu className="text-black" />}</button>
     </div>
    </div>
+  </div>
   );
 }
+
+
