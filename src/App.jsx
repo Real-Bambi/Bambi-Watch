@@ -1,4 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
+import {toast, ToastContainer} from "react-toastify";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
@@ -24,8 +25,10 @@ const bambiWatchRouter = createBrowserRouter([
 function App() {
   return (
     <>
+      <ToastContainer />
       <RouterProvider router={bambiWatchRouter} />
     </>
+
   )
 }
 
