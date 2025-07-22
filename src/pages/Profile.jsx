@@ -5,54 +5,60 @@ import Movie1Image from '../assets/movie1.jpg';
 import Movie2Image from '../assets/movie2.jpg';
 import Movie3Image from '../assets/movie3.jpg';
 import Footer from "../components/Footer";
-import { useEffect, useState } from "react";
-import { apiClient } from "../../api/client";
+import { useState } from "react";
+import { apiClient,apiFetcher  } from "../../api/client";
+import useSWR from "swr";
+import { BeatLoader } from "react-spinners";
+
 
 
 
 
 export default function Profile() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [avatar, setAvatar] = useState(null);
-  const [bio, setBio] = useState("");
-
-
-
-   const FetchUser = async () => {
-    try {
-      const respond = await apiClient.get('users/me')
-      setAvatar(respond.data.avatarUrl);
-      setBio(respond.data.bio);
-    } catch (error){
-      console.log(error)
-    }
-  }
-  
-  useEffect(() => {
-    FetchUser();
-  }, []);
+ 
 
   const OpenModal = () => setIsModalOpen(true);
   const CloseModal = () => setIsModalOpen(false);
-  
- 
+
+ // Fetching data from backend
+  const { data, isLoading, error } = useSWR("users/me", apiFetcher)
 
 
-
-
-  const postUser = async (data) => {
+  // Update data to Backend
+  const UpdateUser = async (data) => {
+    // Update data to API 
     try {
-      const response = await apiClient.patch('users/me', data, {
-        method: 'PATCH',
+      const response = await apiClient.patch("users/me",data, {
         headers: {
-          "Content-Type": 'application/json'
+          Authorization:`Bearer ${localStorage.getItem("ACCESS_TOKEN")}`
         }
       });
-      console.log(response)
+      console.table(response.data)
     } catch (error) {
       console.log(error);
     }
   }
+
+  if (isLoading) {
+    return (
+      <div>
+        <BeatLoader size={100} />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div><p>Something went wrong</p></div>
+    )
+  }
+
+
+ 
+
+  
+  
 
 
 
@@ -105,18 +111,20 @@ export default function Profile() {
       onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
     >
             {/* This is the modal content  */}
-            <form action={postUser} className="flex flex-col gap-5 ">
+            <form action={UpdateUser} className="flex flex-col gap-5 ">
               <h2 className="text-xl font-semibold text-purple-700 ">Update Profile</h2>
               <input type="file"
-                accept="image/*"
-                name="avatarUrl"
-                id="avatarUrl"
-               onChange={(e) => setAvatar(e.target.files[0])}
+                // accept="image/*"
+                name="avatar"
+                id="avatar"
+                
+              
                 className="w-full px-4 py-2 bg-white rounded border border-[#9333EA]"
+                defaultValue={data.avatar}
                 placeholder="Update avatar" />
-              <textarea name="bio" id="bio" placeholder="Update your bio..." value={bio}
-  onChange={(e) => setBio(e.target.value)} className="w-full h-32 px-4 py-2 bg-white border border-[#9333EA] resize-none"></textarea>
-              <button type="button" className="px-6 py-2 text-white bg-[#9333EA] font-medium rounded" onClick={CloseModal} >Done</button>
+              <textarea name="bio" id="bio" placeholder="Update your bio..." defaultValue={data.bio}
+ className="w-full h-32 px-4 py-2 bg-white border border-[#9333EA] resize-none"></textarea>
+              <button type="submit" className="px-6 py-2 text-white bg-[#9333EA] font-medium rounded" >Done</button>
             </form>
       
     </div>
@@ -126,15 +134,15 @@ export default function Profile() {
       <section className="bg-[#1E293B] flex flex-col justify-between gap-5 w-[90%] mx-auto mt-10 rounded p-4">
         <div className="flex items-center gap-2 p-2">
           <History className="text-[#9333EA]" />
-          <h1 className="text-white text-2xl">Recent Activity</h1>
+          <h1 className="text-white text-2xl">Create a Virtual Room on the Dashboard</h1>
         </div>
         <div className="bg-[#0F172A] w-[90%] mx-auto flex items-center gap-2 p-2 rounded">
         <div className="bg-[#9333EA] p-1.5 rounded">
             <Play  className="w-5 h-5 "/>
         </div>
         <div className="text-white">
-          <h2>Watched "Faults in Our Stars" </h2>
-          <p>2 Hours</p>
+          <h2>Watched "Faults in Our Stars" with Friends in real time </h2>
+          
         </div>
         </div>
 
@@ -143,15 +151,15 @@ export default function Profile() {
            <Star  className="w-5 h-5 "/>
        </div>
         <div className="text-white">
-          <h2>Rated 'Now You See Me' 5 stars </h2>
-          <p>3 days ago</p>
+          <h2>Share Your Opinions about the movie in our group chat </h2>
+         
         </div>
         </div>
       </section>
       <section className="bg-[#1E293B] p-4 w-[90%] mx-auto mt-8">
     <div className="flex items-center gap-2 text-white p-2">
       <Clapperboard className= "text-[#9333EA] " />
-      <h2 className="font-bold text-xl ">Recently watched</h2>
+      <h2 className="font-bold text-xl ">Recommended Movies</h2>
     </div>
     <div className="flex flex-col md:flex-row items-center justify-center pt-6 gap-10 w-[90%] mx-auto text-white">
       <div className="w-64 rounded-lg overflow-hidden shadow-md">
@@ -184,59 +192,3 @@ export default function Profile() {
 
 
 
-// {isModalOpen && (
-//         <div
-//           className="fixed inset-0  bg-opacity-50 flex justify-center items-center z-50 p-4"
-//           onClick={closeModal}
-//         >
-
-//           <div
-//             className="bg-white text-gray-800 rounded-lg shadow-xl w-full max-w-md p-6 relative"
-//             onClick={(e) => e.stopPropagation()}
-//           >
-            
-//             <button onClick={closeModal} className="absolute top-2 right-2 text-gray-600 hover:text-gray-900 transition-colors">
-//               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-//                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-//               </svg>
-//             </button>
-
-//             <h2 className="text-2xl font-bold mb-4">Invite Friends</h2>
-//             <div className="mb-6">
-//               <label className="block text-sm font-medium mb-2">
-//                 Copy link below
-//               </label>
-//               <div className="flex items-center space-x-2">
-//                 <input type="text" readOnly value={roomLink} className="flex-1 border-gray-500 bg-blue-100 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-//                 <button onClick={handleCopyLink} className="bg-blue-600 text-white p-2 rounded-lg font-medium hover:bg-blue-700 transition-colors relative">  {isCopied ? (
-//                     <span className="absolute -top-6 left-1/2 -translate-x-1/2 bg-green-500 text-white text-xs px-2 py-1 rounded-full whitespace-nowrap">Copied!</span>  ) : null}
-//                   <Copy className="h-5 w-5" /> 
-//                 </button>
-//               </div>
-//             </div>
-
-//             <div>
-//               <p className="text-sm font-medium mb-2">Or share on social media</p>
-//               <div className="flex items-center space-x-4">
-  
-//                 <button className="bg-blue-500 text-white rounded-full p-2 hover:bg-blue-600 transition-colors">
-//                   <Facebook className="h-5 w-5" />
-//                 </button>
-//                 <button className="bg-pink-500 text-white rounded-full p-2 hover:bg-pink-600 transition-colors">
-//                   <Instagram className="h-5 w-5" />
-//                 </button>
-//                 <button className="bg-blue-400 text-white rounded-full p-2 hover:bg-blue-500 transition-colors">
-                 
-//                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-//                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 6l-7 7-7-7" />
-//                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l7-7-7-7" />
-//                   </svg>
-//                 </button>
-//                 <button className="bg-green-500 text-white rounded-full p-2 hover:bg-green-600 transition-colors">
-//                   <Mail className="h-5 w-5" />
-//                 </button>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       )}
