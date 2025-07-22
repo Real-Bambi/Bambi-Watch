@@ -6,16 +6,17 @@ import Sidebar from '../components/Sidebar';
 import CreateRoomModal from '../components/CreateRoomModal';
 import { apiClient } from '../../api/client';
 
+
 const fetcher = (url) =>
   apiClient
     .get(url, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('bambi_token')}`,
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     })
     .then((res) => res.data);
 
-// Helper function to extract YouTube video ID
+
 const getYouTubeVideoId = (url) => {
   const regex = /(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([^&?/]+)/;
   const match = url.match(regex);
@@ -30,8 +31,10 @@ function Dashboard() {
   const { data, error, isLoading } = useSWR('/rooms/active', fetcher);
 
   const activeRooms = data?.rooms || [];
-  const username = userData?.data?.username || 'Guest';
-  const profileImg = userData?.data?.avatar || 'https://via.placeholder.com/40';
+
+  
+  const username = userData?.username || 'Guest';
+  const profileImg = userData?.avatar || 'https://via.placeholder.com/40';
 
   const yourVideos = [
     { id: 1, title: 'Reason to start coding', image: 'https://www.youtube.com/shorts/yETfkVksrxA' },
@@ -141,7 +144,7 @@ function Dashboard() {
           )}
         </section>
 
-        {/* Your Videos with clickable thumbnails */}
+       
         <section className="p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">Your Videos</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">

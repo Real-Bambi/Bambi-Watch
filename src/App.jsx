@@ -1,5 +1,8 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
-import {toast, ToastContainer} from "react-toastify";
+import { ToastContainer } from "react-toastify";
+import { AuthProvider } from "./context/AuthContext"; 
+
+// your routes (unchanged)
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
@@ -17,19 +20,18 @@ const bambiWatchRouter = createBrowserRouter([
   { path: "/sign-up", element: <SignUp /> },
   { path: "/dashboard", element: <Dashboard /> },
   { path: "/profile", element: <Profile /> },
-  { path: "/watchroom", element: <Watchroom /> },
+  { path: "/watchroom/:id", element: <Watchroom /> }, 
   { path: "/contact", element: <Contact /> },
   { path: "*", element: <Error /> },
 ]);
 
 function App() {
   return (
-    <>
+    <AuthProvider>
       <ToastContainer />
       <RouterProvider router={bambiWatchRouter} />
-    </>
-
-  )
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;
