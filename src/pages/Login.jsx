@@ -17,10 +17,10 @@ export default function Login() {
             });
             console.log(response);
             localStorage.setItem('ACCESS_TOKEN', response.data.token);
-            navigate('/');
+            navigate('/dashboard');
         }
 
- // Catch Errpr
+ // Catch Error
 
         catch(error) {
             console.log(error);
