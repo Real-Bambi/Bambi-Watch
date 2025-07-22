@@ -10,7 +10,7 @@ export default function Footer() {
                
                 <div>
                     <div className="flex flex-row items-center gap-2 text-white font-bold italic tracking-wide py-4">
-                        <div className="bg-[#9333EA] p-1.5 rounded animate-bounce">
+                        <div className="bg-[#9333EA] p-1.5 rounded">
                            <Play className="w-5 h-5 text-white "/>
                         </div>
                        

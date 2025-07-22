@@ -1,7 +1,15 @@
-import React, { useState } from 'react';
-import { Link } from "react-router";
+import React, { useEffect, useState, useContext, useRef } from 'react';
+import { apiClient } from "../api/client";
+import socket from "../api/socket";
+import { AuthContext } from "../context/AuthContext";
+import { Link, useParams, useNavigate } from "react-router";
 import { Video, Users, Share2, Copy, Facebook, Instagram, MessagesSquare, Send, Mail, Search } from "lucide-react";
 
+
+const formatTime = (isoString) => {
+  const date = new Date(isoString); 
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+};
 
 import YouTubePlayer from "../components/YoutubePlayer";
 
@@ -35,28 +43,191 @@ const ChatSidebar = () => {
   );
 };
 
-const Watchroom = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
 
-  const videoId = "avVdZhPQiak";
-  const roomLink = "https://your-app.com/watchroom/room-id-123";
+  
+function WatchRoom() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(roomLink).then(() => {
-      setIsCopied(true);
-      setTimeout(() => {
-        setIsCopied(false);
-      }, 2000);
-    }).catch(err => {
-      console.error('Failed to copy text: ', err);
-    });
+ 
+  const [room, setRoom] = useState(null); 
+  const [messages, setMessages] = useState([]); 
+  const [newMessage, setNewMessage] = useState("");
+  const [usersWatching, setUsersWatching] = useState(0); 
+  const [copied, setCopied] = useState(false); 
+
+  
+  const messagesEndRef = useRef(null); 
+  const playerRef = useRef(null); 
+  const inviteLink = `${window.location.origin}/watchroom/${id}`;
+
+  const headerRef = useRef(null);
+  const [headerHeight, setHeaderHeight] = useState(0);
+
+  useEffect(() => {
+    
+    const measureHeader = () => {
+      if (headerRef.current) {
+        setHeaderHeight(headerRef.current.offsetHeight);
+      }
+    };
+
+    measureHeader(); 
+    window.addEventListener('resize', measureHeader);
+
+    // Cleanup function: This runs when the component unmounts
+    return () => {
+      window.removeEventListener('resize', measureHeader);
+    };
+  }, []); 
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const init = async () => {
+      try {
+        const roomRes = await apiClient.get(`/rooms/${id}`);
+        const messagesRes = await apiClient.get(`/rooms/${id}/messages`);
+
+        if (isMounted) {
+          setRoom(roomRes.data);
+          setMessages(messagesRes.data);
+
+          socket.auth = { token: localStorage.getItem("token") };
+          socket.connect();
+          socket.emit("joinRoom", { roomId: id, username: user.username });
+
+          socket.on("chat:message", handleMessage);
+          socket.on("room:systemMessage", handleSystemMessage);
+          socket.on("room:usersUpdate", ({ count }) => setUsersWatching(count));
+          socket.on("video:play", handlePlay);
+          socket.on("video:pause", handlePause);
+          socket.on("video:seek", handleSeek);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    init(); 
+
+    return () => {
+      isMounted = false; 
+      socket.off("chat:message", handleMessage);
+      socket.off("room:systemMessage", handleSystemMessage);
+      socket.off("room:usersUpdate");
+      socket.off("video:play", handlePlay);
+      socket.off("video:pause", handlePause);
+      socket.off("video:seek", handleSeek);
+      socket.disconnect();
+    };
+  }, [id, user.username]); 
+
+  const handleMessage = (message) => {
+    setMessages((prev) => [...prev, message]);
   };
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const handleSystemMessage = ({ message, timestamp }) => {
+    setMessages((prev) => [...prev, { system: true, message, timestamp }]);
+  };
 
-  return (
+  const handlePlay = ({ time }) => {
+    if (playerRef.current) {
+      playerRef.current.seekTo(time, true); 
+      playerRef.current.playVideo();
+    }
+  };
+
+  const handlePause = ({ time }) => {
+    if (playerRef.current) {
+      playerRef.current.seekTo(time, true);
+      playerRef.current.pauseVideo();
+    }
+  };
+
+  const handleSeek = ({ time }) => {
+    if (playerRef.current) {
+      playerRef.current.seekTo(time, true);
+    }
+  };
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    if (!room) return;
+
+    const tag = document.createElement("script");
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName("script")[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    window.onYouTubeIframeAPIReady = () => {
+      playerRef.current = new window.YT.Player("player", {
+        videoId: room.videoId, 
+        events: {
+          onStateChange: onPlayerStateChange,
+        },
+      });
+    };
+
+    const onPlayerStateChange = (event) => {
+      const player = playerRef.current;
+      if (!player) return;
+      const time = player.getCurrentTime();
+      if (event.data === window.YT.PlayerState.PLAYING) {
+        socket.emit("video:play", { roomId: id, time });
+      }
+      if (event.data === window.YT.PlayerState.PLAYING) {
+        socket.emit("video:play", { roomId: id, time });
+      }
+      if (event.data === window.YT.PlayerState.PAUSED) {
+        socket.emit("video:pause", { roomId: id, time });
+      }
+      if (event.data === window.YT.PlayerState.BUFFERING && player.getCurrentTime() !== time) {
+         socket.emit("video:seek", { roomId: id, time: player.getCurrentTime() });
+      }
+    };
+
+    return () => {
+      // Clear the global YouTube API ready function to prevent issues if component unmounts and remounts
+      window.onYouTubeIframeAPIReady = null;
+    };
+  }, [room, id]);
+
+  const sendMessage = () => {
+    if (newMessage.trim()) {
+      socket.emit("chat:message", {
+        roomId: id,
+        message: newMessage,
+        userId: user.id,
+        username: user.username,
+      });
+      setNewMessage("");
+    }
+  };
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(inviteLink);
+      setCopied(true); 
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Copy failed:", err);
+    }
+  };
+
+  const leaveRoom = () => {
+    socket.disconnect();
+    navigate("/dashboard");
+  };
+
+  
+return (
     <div className="flex flex-col min-h-screen bg-[#1F2937] text-white">
       <header className="flex justify-between items-center p-4 bg-[#111827] shadow-md">
         <div className="flex items-center gap-2">
@@ -146,4 +317,4 @@ const Watchroom = () => {
   );
 };
 
-export default Watchroom;
+export default WatchRoom;
