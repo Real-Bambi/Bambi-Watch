@@ -6,6 +6,8 @@ import Love from "../assets/aboutpic1.jpg"
 import Face from "../assets/sec41.jpg"
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import headShot from "../assets/headshot.jpg";
+import { Link } from "react-router";
 
 
 export default function Home() {
@@ -14,19 +16,29 @@ export default function Home() {
       <Navbar />
       {/* Hero Section */}
       <section
-        className="bg-cover bg-center bg-no-repeat w-full h-[100vh]"
-        style={{ backgroundImage: `url(${Hero})` }}>
-        <div className="text-white w-[40%] flex flex-col space-y-6 p-12">
-          <p className="text-6xl font-bold">Watch Movies Together,Even <br /> Apart</p>
-          <p className="text-[#B3B2AC] text-lg">Connect with friends and family for synchronized movie nights.,<br />
-            Share reactions, chat in real-time, and create unforgettable memories from anywhere in the world.</p>
-          <div className="flex flex-row gap-10">
-            <button className="bg-[#FF8259] hover:bg-[#e86f48] w-[30%] p-2"> Discover More</button>
-            <CircleChevronRight className="text-[#FF8259] bg-white w-12 h-12 p-2 rounded-4xl" />
+        className="relative bg-cover bg-center bg-no-repeat w-full h-screen flex items-center"
+        style={{ backgroundImage: `url(${Hero})` }}
+      >
+
+        {/* Content */}
+        <div className="relative z-10 text-white max-w-[600px] ml-12 p-6 md:p-12 space-y-6">
+          <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+            Watch Movies Together, <br className="hidden md:block" /> Even Apart
+          </h1>
+          <p className="text-[#D1D0CB] text-base md:text-lg leading-relaxed">
+            Connect with friends and family for synchronized movie nights. <br className="hidden md:block" />
+            Share reactions, chat in real-time, and create unforgettable memories from anywhere in the world.
+          </p>
+
+          <div className="flex items-center gap-6 pt-2">
+            <button className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg transition-all duration-300">
+              Discover More
+            </button>
+            <div className="bg-white rounded-full p-2 shadow-md">
+              <CircleChevronRight className="text-purple-600 w-8 h-8" />
+            </div>
           </div>
         </div>
-
-        <div></div>
       </section>
 
       {/* Second Section */}
@@ -111,56 +123,111 @@ export default function Home() {
       {/* Fourth Section*/}
       <section className="h-[70vh] ">
         <div className="flex flex-col justify-center items-center my-10 mb-20">
-          <p className="text-3xl font-medium">What Our  <span className="text-purple-500 italic">Users Say♪⁕</span></p>
+          <p className="text-3xl font-medium">What Our  <span className="text-purple-500 italic">Users Say✦✦</span></p>
           <p className="text-lg text-gray-500"> <span className="text-purple-500 font-bold">—</span>Join thousands of happy users who've made SyncWatch their go-to platform</p>
         </div>
 
-        <div className="grid grid-cols-3 m-6 ">
-          <div className="h-[35vh] w-[90%] p-2 border border-[#B3B2AC] bg-[#f0efeb] rounded-2xl">
-            <div className="flex flex-row gap-10  ">
-              <img src={Face} alt="face" className="rounded-4xl w-20 h-16" />
-              <div className="flex flex-col pb-4">
-                <p className="font-bold">Sandra Blake</p>
-                <p className="text-gray-500">CEO, Digital Agency</p>
-                <p className="text-purple-500 font-bold text-xl">★★★★★5.0 </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 m-6">
+          <div className="h-[35vh] w-[90%] p-6 border border-gray-300 bg-[#f8f7f4] rounded-2xl shadow-md hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
+            <div className="flex items-start gap-4 mb-4">
+              <img src={Face} alt="face" className="rounded-2xl w-16 h-16 object-cover" />
+              <div className="flex flex-col">
+                <p className="font-bold text-lg">Sandra Blake</p>
+                <p className="text-gray-500 text-sm">CEO, Digital Agency</p>
+                <p className="text-purple-500 font-semibold text-base">★★★★★ 5.0</p>
               </div>
-              <p className="text-4xl text-purple-600"> ❤️  </p>
+              <p className="ml-auto text-4xl text-purple-600">𖹭</p>
             </div>
-            <div>
-              <p>"SyncWatch has been a game-changer for our family movie nights!
-                <br /> My kids are in college now, but we still watch movies together every Friday. <br /> It feels like we're all in the same room."</p>
-            </div>
-
+            <p className="text-gray-700 text-sm leading-relaxed">
+              "SyncWatch has been a game-changer for our family movie nights!
+              <br /> My kids are in college now, but we still watch movies together every Friday. <br /> It feels like we're all in the same room."
+            </p>
           </div>
-          <div className="h-[35vh] w-[90%] p-2 border border-[#B3B2AC] bg-[#f0efeb] rounded-2xl">
-            <div className="flex flex-row gap-10  ">
-              <img src={Face} alt="face" className="rounded-4xl w-20 h-16" />
-              <div className="flex flex-col pb-4">
-                <p className="font-bold">Mike Chen</p>
-                <p className="text-gray-500">Software Engineer</p>
-                <p className="text-purple-500 font-bold text-xl">★★★★★5.0 </p>
-              </div>
-              <p className="text-4xl text-purple-600"> ❤️  </p>
-            </div>
-            <div>
-              <p>"Perfect for long-distance relationships! <br />My girlfriend and I use SyncWatch every weekend. The chat feature <br /> makes it feel like we're cuddling on the couch together."</p>
-            </div>
 
+          <div className="h-[35vh] w-[90%] p-6 border border-gray-300 bg-[#f8f7f4] rounded-2xl shadow-md hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
+            <div className="flex items-start gap-4 mb-4">
+              <img src={Face} alt="face" className="rounded-2xl w-16 h-16 object-cover" />
+              <div className="flex flex-col">
+                <p className="font-bold text-lg">Mike Chen</p>
+                <p className="text-gray-500 text-sm">Software Engineer</p>
+                <p className="text-purple-500 font-semibold text-base">★★★★★ 5.0</p>
+              </div>
+              <p className="ml-auto text-4xl text-purple-600">𖹭</p>
+            </div>
+            <p className="text-gray-700 text-sm leading-relaxed">
+              "Perfect for long-distance relationships! <br />
+              My girlfriend and I use SyncWatch every weekend. The chat feature <br />
+              makes it feel like we're cuddling on the couch together."
+            </p>
           </div>
-          <div className="h-[35vh] w-[90%] p-2 border border-[#B3B2AC] bg-[#f0efeb] rounded-2xl">
-            <div className="flex flex-row gap-10  ">
-              <img src={Face} alt="face" className="rounded-4xl w-20 h-16" />
-              <div className="flex flex-col pb-4">
-                <p className="font-bold">Emma Rodriguez</p>
-                <p className="text-gray-500">Marketing Manager</p>
-                <p className="text-purple-500 font-bold text-xl">★★★★★5.0 </p>
+
+          <div className="h-[35vh] w-[90%] p-6 border border-gray-300 bg-[#f8f7f4] rounded-2xl shadow-md hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
+            <div className="flex items-start gap-4 mb-4">
+              <img src={Face} alt="face" className="rounded-2xl w-16 h-16 object-cover" />
+              <div className="flex flex-col">
+                <p className="font-bold text-lg">Emma Rodriguez</p>
+                <p className="text-gray-500 text-sm">Marketing Manager</p>
+                <p className="text-purple-500 font-semibold text-base">★★★★★ 5.0</p>
               </div>
-              <p className="text-4xl text-purple-600"> ❤️  </p>
+              <p className="ml-auto text-4xl text-purple-600">𖹭</p>
             </div>
-            <div>
-              <p>"Our friend group scattered across different cities after college, <br /> but SyncWatch keeps us connected. <br /> We have weekly movie nights that feel just like old times!"</p>
+            <p className="text-gray-700 text-sm leading-relaxed">
+              "Our friend group scattered across different cities after college, <br />
+              but SyncWatch keeps us connected. <br />
+              We have weekly movie nights that feel just like old times!"
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Fifth session */}
+      <section >
+        <div className="relative h-[50vh] w-full overflow-hidden">
+          {/* Background Images Row */}
+          <div className="absolute inset-0 flex">
+            <img
+              src={headShot}
+              alt="meeting"
+              className="w-1/3 h-full object-cover"
+            />
+            <img
+              src={headShot}
+              alt="meeting"
+              className="w-1/3 h-full object-cover"
+            />
+            <img
+              src={headShot}
+              alt="meeting"
+              className="w-1/3 h-full object-cover"
+            />
+          </div>
+
+          {/* Optional Overlay */}
+          <div className="absolute inset-0 bg-[rgba(128,0,128,0.4)]" />
+
+          {/* Text Content on top */}
+          <div className="relative z-10 h-full flex flex-col justify-center items-center text-center px-4 text-white">
+            <div className="mb-6">
+              <p className="text-4xl md:text-5xl font-bold leading-snug">
+                Ready to Start Your Movie Night?
+              </p>
+              <p className="mt-4 max-w-2xl text-lg md:text-xl">
+                Join millions of users who've discovered the joy of synchronized entertainment
+              </p>
             </div>
 
+            <div className="flex flex-col md:flex-row gap-4 mt-6">
+              <Link to="/dashboard">
+                <button className="px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold shadow-lg transition-all duration-300">
+                  Create Your First Room
+                </button>
+              </Link>
+              <Link to="/about">
+                <button className="px-6 py-3 rounded-xl bg-white hover:bg-gray-100 text-purple-700 font-semibold shadow-lg transition-all duration-300">
+                  Learn More
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

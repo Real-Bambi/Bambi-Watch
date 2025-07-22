@@ -5,11 +5,60 @@ import Movie1Image from '../assets/movie1.jpg';
 import Movie2Image from '../assets/movie2.jpg';
 import Movie3Image from '../assets/movie3.jpg';
 import Footer from "../components/Footer";
+import { useEffect, useState } from "react";
+import { apiClient } from "../../api/client";
 
 
 
 
 export default function Profile() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [avatar, setAvatar] = useState(null);
+  const [bio, setBio] = useState("");
+
+
+
+   const FetchUser = async () => {
+    try {
+      const respond = await apiClient.get('users/me')
+      setAvatar(respond.data.avatarUrl);
+      setBio(respond.data.bio);
+    } catch (error){
+      console.log(error)
+    }
+  }
+  
+  useEffect(() => {
+    FetchUser();
+  }, []);
+
+  const OpenModal = () => setIsModalOpen(true);
+  const CloseModal = () => setIsModalOpen(false);
+  
+ 
+
+
+
+
+  const postUser = async (data) => {
+    try {
+      const response = await apiClient.patch('users/me', data, {
+        method: 'PATCH',
+        headers: {
+          "Content-Type": 'application/json'
+        }
+      });
+      console.log(response)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
+
+
+
+
   return (
 
     <div className="bg-[#0F172A]">
@@ -42,9 +91,38 @@ export default function Profile() {
           </div>
         </div>
         <div>
-          <button className="bg-white px-6 py-2 m-4 rounded text-[#4F84E7] hover:text-blue-950">Edit Profile</button>
+          <button className="bg-white px-6 py-2 m-4 rounded text-[#4F84E7] hover:text-blue-950" onClick={OpenModal}>Edit Profile</button>
         </div>
       </div>
+
+      {isModalOpen && (
+  <div
+    className="fixed inset-0 bg-gradient-to-br from-purple-400 to-white bg-opacity-60 backdrop-blur-sm flex justify-center items-center z-50"
+    onClick={CloseModal}
+  >
+    <div
+      className="bg-white p-8 rounded-2xl shadow-lg max-w-md w-full"
+      onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
+    >
+            {/* This is the modal content  */}
+            <form action={postUser} className="flex flex-col gap-5 ">
+              <h2 className="text-xl font-semibold text-purple-700 ">Update Profile</h2>
+              <input type="file"
+                accept="image/*"
+                name="avatarUrl"
+                id="avatarUrl"
+               onChange={(e) => setAvatar(e.target.files[0])}
+                className="w-full px-4 py-2 bg-white rounded border border-[#9333EA]"
+                placeholder="Update avatar" />
+              <textarea name="bio" id="bio" placeholder="Update your bio..." value={bio}
+  onChange={(e) => setBio(e.target.value)} className="w-full h-32 px-4 py-2 bg-white border border-[#9333EA] resize-none"></textarea>
+              <button type="button" className="px-6 py-2 text-white bg-[#9333EA] font-medium rounded" onClick={CloseModal} >Done</button>
+            </form>
+      
+    </div>
+  </div>
+)}
+    
       <section className="bg-[#1E293B] flex flex-col justify-between gap-5 w-[90%] mx-auto mt-10 rounded p-4">
         <div className="flex items-center gap-2 p-2">
           <History className="text-[#9333EA]" />
@@ -106,58 +184,59 @@ export default function Profile() {
 
 
 
-// import { UsersIcon, FilmIcon, Clock } from 'lucide-react';
-// import Navbar from './Navbar';
+// {isModalOpen && (
+//         <div
+//           className="fixed inset-0  bg-opacity-50 flex justify-center items-center z-50 p-4"
+//           onClick={closeModal}
+//         >
 
-// export default function ProfileCard() {
-//   return (
-//     <div>
-//       <Navbar />
+//           <div
+//             className="bg-white text-gray-800 rounded-lg shadow-xl w-full max-w-md p-6 relative"
+//             onClick={(e) => e.stopPropagation()}
+//           >
+            
+//             <button onClick={closeModal} className="absolute top-2 right-2 text-gray-600 hover:text-gray-900 transition-colors">
+//               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+//                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+//               </svg>
+//             </button>
 
-//       <div className="flex justify-between items-center w-[90%] mx-auto mt-10 p-6 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-500 text-white shadow-md">
-        
-//         {/* Profile Section */}
-//         <div className="flex items-center gap-6">
-//           {/* Profile Image */}
-//           <div className="relative">
-//             <img
-//               src="https://randomuser.me/api/portraits/men/75.jpg"
-//               alt="Profile"
-//               className="w-20 h-20 rounded-full border-4 border-white shadow-md object-cover"
-//             />
-//             {/* Optional camera icon overlay */}
-//             <div className="absolute bottom-0 right-0 w-5 h-5 bg-white rounded-full flex items-center justify-center">
-//               <input type="file" accept="image/*" className="opacity-0 absolute w-full h-full cursor-pointer" />
-//               <span className="text-xs text-black">📷</span>
+//             <h2 className="text-2xl font-bold mb-4">Invite Friends</h2>
+//             <div className="mb-6">
+//               <label className="block text-sm font-medium mb-2">
+//                 Copy link below
+//               </label>
+//               <div className="flex items-center space-x-2">
+//                 <input type="text" readOnly value={roomLink} className="flex-1 border-gray-500 bg-blue-100 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+//                 <button onClick={handleCopyLink} className="bg-blue-600 text-white p-2 rounded-lg font-medium hover:bg-blue-700 transition-colors relative">  {isCopied ? (
+//                     <span className="absolute -top-6 left-1/2 -translate-x-1/2 bg-green-500 text-white text-xs px-2 py-1 rounded-full whitespace-nowrap">Copied!</span>  ) : null}
+//                   <Copy className="h-5 w-5" /> 
+//                 </button>
+//               </div>
 //             </div>
-//           </div>
 
-//           {/* Profile Info */}
-//           <div>
-//             <h2 className="text-xl font-bold">Alex Johnson</h2>
-//             <p className="text-sm">Movie enthusiast & binge-watcher extraordinaire</p>
-//             <div className="flex gap-6 text-sm mt-2">
-//               <span className="flex items-center gap-1">
-//                 <UsersIcon className="w-4 h-4" />
-//                 127 Friends
-//               </span>
-//               <span className="flex items-center gap-1">
-//                 <FilmIcon className="w-4 h-4" />
-//                 89 Movies Watched
-//               </span>
-//               <span className="flex items-center gap-1">
-//                 <Clock className="w-4 h-4" />
-//                 342 Hours
-//               </span>
+//             <div>
+//               <p className="text-sm font-medium mb-2">Or share on social media</p>
+//               <div className="flex items-center space-x-4">
+  
+//                 <button className="bg-blue-500 text-white rounded-full p-2 hover:bg-blue-600 transition-colors">
+//                   <Facebook className="h-5 w-5" />
+//                 </button>
+//                 <button className="bg-pink-500 text-white rounded-full p-2 hover:bg-pink-600 transition-colors">
+//                   <Instagram className="h-5 w-5" />
+//                 </button>
+//                 <button className="bg-blue-400 text-white rounded-full p-2 hover:bg-blue-500 transition-colors">
+                 
+//                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+//                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 6l-7 7-7-7" />
+//                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l7-7-7-7" />
+//                   </svg>
+//                 </button>
+//                 <button className="bg-green-500 text-white rounded-full p-2 hover:bg-green-600 transition-colors">
+//                   <Mail className="h-5 w-5" />
+//                 </button>
+//               </div>
 //             </div>
 //           </div>
 //         </div>
-
-//         {/* Edit Button */}
-//         <button className="bg-white text-purple-700 font-medium px-4 py-2 rounded-md shadow-md hover:bg-gray-100">
-//           Edit Profile
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
+//       )}

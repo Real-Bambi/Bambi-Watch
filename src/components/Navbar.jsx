@@ -10,8 +10,8 @@ export default function Navbar() {
 
 
   return (
-  <div className="relative">
-     <div className="flex flex-row justify-between items-center p-2 bg-white shadow-md">
+  <div className="relative z-10">
+     <div className="flex flex-row justify-between fixed top-0 left-0 right-0 items-center p-2 bg-white shadow-md">
     <div className="flex items-center gap-2">
      <div className="bg-[#9333EA] p-1.5 rounded ">
        <Play className="w-5 h-5 text-white "/>
@@ -22,7 +22,7 @@ export default function Navbar() {
 
     {/* Desktop Menu */}
     <div className="hidden md:flex text-black flex-row z-50 justify-between gap-6">
-    <Link to={'#'} className="hover:text-[#9333EA]">Home</Link>
+    <Link to={'/'} className="hover:text-[#9333EA]">Home</Link>
     <Link to={'#'} className="hover:text-[#9333EA]">About</Link>
     <Link to={'#'} className="hover:text-[#9333EA]">Reviews</Link>
     <Link to={'#'} className="hover:text-[#9333EA]">Contact</Link>
