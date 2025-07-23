@@ -46,16 +46,17 @@ export default function SignUp() {
 
     return (
         <div
-            className="bg-cover bg-center h-screen flex justify-center items-center"
+            className="bg-cover bg-center min-h-screen flex justify-center items-center px-4"
             style={{ backgroundImage: `url(${Nicebg})` }}
         >
             <div
-                className="bg-cover bg-center h-[80vh] w-[90%] shadow-[0_20px_50px_rgba(0,0,0,0.6)] flex flex-row"
+                className="bg-cover bg-center w-full max-w-6xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] flex flex-col md:flex-row h-auto md:h-[80vh] overflow-hidden"
                 style={{ backgroundImage: `url(${Nicebg})` }}
             >
-                <div className="w-[50%] flex flex-col justify-center items-center bg-[rgba(0,0,0,0.5)]">
-                    <p className="text-white font-bold text-5xl">Let's get started!</p>
-                    <p className="flex justify-center text-center pt-6 text-2xl text-white italic">
+                {/* Left Section */}
+                <div className="w-full md:w-[50%] flex flex-col justify-center items-center bg-[rgba(0,0,0,0.5)] p-6 text-center">
+                    <p className="text-white font-bold text-4xl md:text-5xl">Let's get started!</p>
+                    <p className="pt-6 text-lg md:text-2xl text-white italic">
                         Already a Member?
                         <Link to="/login" className="text-purple-500 font-semibold hover:underline ml-2">
                             Log In
@@ -63,14 +64,15 @@ export default function SignUp() {
                     </p>
                 </div>
 
-                <div className="w-[40%] flex justify-center items-center">
+                {/* Right Section */}
+                <div className="w-full md:w-[50%] flex justify-center items-center p-6">
                     <form
                         onSubmit={newUser}
-                        className="bg-[rgba(255,255,255,0.2)] p-8 rounded-xl w-full text-white"
+                        className="bg-[rgba(255,255,255,0.2)] p-6 md:p-8 rounded-xl w-full max-w-md text-white"
                     >
                         <div className="flex flex-col justify-center text-center pb-4">
                             <p className="font-bold text-3xl">Watch Together</p>
-                            <p className="font-bold text-lg text-gray-400">
+                            <p className="font-bold text-lg text-gray-300">
                                 Watch movies with friends, anywhere
                             </p>
                         </div>
@@ -82,7 +84,8 @@ export default function SignUp() {
                                 name="username"
                                 value={username}
                                 onChange={(e) => setUserName(e.target.value)}
-                                className="border border-[rgba(255,255,255,0.4)] p-2 rounded-md"
+                                className="border border-[rgba(255,255,255,0.4)] p-2 rounded-md text-black"
+                                required
                             />
                         </div>
 
@@ -93,7 +96,8 @@ export default function SignUp() {
                                 name="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="border border-[rgba(255,255,255,0.4)] p-2 rounded-md"
+                                className="border border-[rgba(255,255,255,0.4)] p-2 rounded-md text-black"
+                                required
                             />
                         </div>
 
@@ -104,7 +108,8 @@ export default function SignUp() {
                                 name="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="border border-[rgba(255,255,255,0.4)] p-2 rounded-md"
+                                className="border border-[rgba(255,255,255,0.4)] p-2 rounded-md text-black"
+                                required
                             />
                         </div>
 
@@ -115,7 +120,8 @@ export default function SignUp() {
                                 name="confirmPassword"
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                className="border border-[rgba(255,255,255,0.4)] p-2 rounded-md"
+                                className="border border-[rgba(255,255,255,0.4)] p-2 rounded-md text-black"
+                                required
                             />
                         </div>
 
