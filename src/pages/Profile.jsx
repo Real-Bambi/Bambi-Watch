@@ -1,5 +1,4 @@
 import {
-  UsersIcon,
   FilmIcon,
   Clock,
   Camera,
