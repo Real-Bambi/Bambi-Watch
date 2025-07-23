@@ -38,6 +38,7 @@ export default function SignUp() {
             console.log(response);
             toast.success("Sign Up Successful");
             navigate("/login");
+            
         } catch (error) {
             console.error(error);
             toast.error("Sign Up Failed");

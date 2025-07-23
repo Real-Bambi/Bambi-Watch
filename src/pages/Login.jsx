@@ -48,11 +48,11 @@ export default function Login() {
         navigate("/dashboard");
       } else {
         console.error("No token received");
-        toast.success("Login Up Successful");
+        toast.success("Login Successful");
       }
     } catch (error) {
       console.error("Login failed:", error);
-      toast.error("Sign Up Failed");
+      toast.error("Login Failed");
     }
   };
 
