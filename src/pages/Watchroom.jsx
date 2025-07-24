@@ -1,26 +1,25 @@
-import React, { useEffect, useState, useContext, useRef } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import { toast } from 'react-toastify';
-import { Copy, Send, MessagesSquare } from 'lucide-react';
+import { Copy, MessagesSquare, LogOut } from 'lucide-react';
 import io from 'socket.io-client';
 
 const socket = io('https://bambi-watch-api.onrender.com');
 
 function Watchroom() {
-  const { id } = useParams(); // roomId
+  const { id } = useParams();
   const navigate = useNavigate();
   const { user, token, loading } = useContext(AuthContext);
 
   const [room, setRoom] = useState(null);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+  const [usersInRoom, setUsersInRoom] = useState(0);
 
-  const playerRef = useRef(null);
-  const chatRef = useRef(null);
+  const currentUser = JSON.parse(localStorage.getItem("user"));
 
-  // Handle auth
   useEffect(() => {
     if (loading) return;
     if (!token) {
@@ -29,24 +28,17 @@ function Watchroom() {
     }
   }, [loading, token, navigate]);
 
-  // Fetch room + messages
   useEffect(() => {
     const fetchRoom = async () => {
       try {
         const res = await axios.get(`https://bambi-watch-api.onrender.com/api/v1/rooms/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         setRoom(res.data);
 
         const msgRes = await axios.get(
           `https://bambi-watch-api.onrender.com/api/v1/rooms/${id}/messages`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         setMessages(msgRes.data);
       } catch (err) {
@@ -58,48 +50,40 @@ function Watchroom() {
     if (token) fetchRoom();
   }, [id, token, navigate]);
 
-  // Handle socket events
   useEffect(() => {
     if (!room) return;
 
-    socket.emit('joinRoom', room.id);
+    const joinedUsername = currentUser?.username || 'Guest';
+
+    socket.emit('joinRoom', { roomId: room.id, username: joinedUsername });
 
     socket.on('chatMessage', (msg) => {
       setMessages((prev) => [...prev, msg]);
     });
 
-    // Video sync handlers
-    socket.on('videoControl', ({ type, time }) => {
-      if (!playerRef.current) return;
-      playerRef.current.contentWindow.postMessage(
-        JSON.stringify({
-          event: 'command',
-          func: type,
-          args: type === 'seekTo' ? [time, true] : [],
-        }),
-        '*'
-      );
+    socket.on('roomUsers', (count) => {
+      setUsersInRoom(count);
     });
+
+    const joinNotice = {
+      username: 'system',
+      text: `${joinedUsername} has joined the room`,
+      time: new Date().toLocaleTimeString(),
+    };
+    socket.emit('chatMessage', { roomId: room.id, ...joinNotice });
 
     return () => {
       socket.off('chatMessage');
-      socket.off('videoControl');
+      socket.off('roomUsers');
       socket.emit('leaveRoom', room.id);
     };
-  }, [room]);
-
-  // Auto-scroll chat
-  useEffect(() => {
-    if (chatRef.current) {
-      chatRef.current.scrollTop = chatRef.current.scrollHeight;
-    }
-  }, [messages]);
+  }, [room, currentUser]);
 
   const sendMessage = () => {
     if (!message.trim()) return;
 
     const newMsg = {
-      username: user?.username || 'Guest',
+      username: currentUser?.username || 'Guest',
       text: message,
       time: new Date().toLocaleTimeString(),
     };
@@ -109,28 +93,9 @@ function Watchroom() {
     setMessage('');
   };
 
-  const sendVideoCommand = (type, time = 0) => {
-    socket.emit('videoControl', { roomId: room.id, type, time });
-  };
-
-  const handleYouTubeReady = () => {
-    window.addEventListener('message', (e) => {
-      const data = JSON.parse(e.data);
-      if (data.event === 'onStateChange') {
-        if (data.info === 1) {
-          // Play
-          sendVideoCommand('playVideo');
-        } else if (data.info === 2) {
-          // Pause
-          sendVideoCommand('pauseVideo');
-        }
-      }
-    });
-  };
-
   if (loading || !token) {
     return (
-      <div className="flex items-center justify-center h-screen text-lg font-semibold text-purple-700">
+      <div className="flex items-center justify-center h-screen text-lg font-semibold text-purple-200 bg-[#1e0e2f]">
         Authenticating...
       </div>
     );
@@ -138,56 +103,62 @@ function Watchroom() {
 
   if (!room) {
     return (
-      <div className="flex items-center justify-center h-screen text-red-600">
+      <div className="flex items-center justify-center h-screen text-red-600 bg-[#1e0e2f]">
         Room not found or something went wrong.
       </div>
     );
   }
 
   const videoId = room.videoId;
-  const createdAt = new Date(room.createdAt).toLocaleString();
   const roomLink = `${window.location.origin}/watchroom/${room.id}`;
 
   return (
-    <div className="min-h-screen bg-[#f9f9f9] p-4 sm:p-6 text-gray-800">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6">
-        {/* Video and Room Info */}
-        <div className="md:col-span-3">
-          <h1 className="text-2xl sm:text-3xl font-bold text-purple-700 mb-2">{room.name}</h1>
-          <p className="text-sm text-gray-600 mb-1">
-            Created by: <span className="font-semibold">{room.createdBy?.username || 'Unknown'}</span>
-          </p>
-          <p className="text-sm text-gray-600 mb-3">Created at: {createdAt}</p>
-
-          <div className="flex items-center gap-2 mb-6">
-            <input
-              type="text"
-              readOnly
-              value={roomLink}
-              className="flex-1 border border-gray-300 rounded-lg px-3 py-1 text-sm"
-            />
+    <div className="min-h-screen bg-[#1e0e2f] text-white p-4">
+      
+      <div className="mb-6 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4">
+        <div className="flex flex-col">
+          <h1 className="text-4xl font-bold text-purple-300 mb-2">{room.name}</h1>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-lg font-bold text-purple-300">Wanna Invite Friends? Just send them this link:</p>
+            <span className="px-2 py-1 bg-gray-800 rounded text-blue-400 text-xs break-all max-w-xs overflow-hidden">
+              {roomLink}
+            </span>
             <button
               onClick={() => {
                 navigator.clipboard.writeText(roomLink);
                 toast.success('Room link copied!');
               }}
-              className="flex items-center gap-1 px-3 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 text-sm"
+              className="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 rounded"
             >
-              <Copy size={16} /> Copy
+              Copy
             </button>
           </div>
+          <div className="text-sm text-gray-300 mt-2">
+            <p>Created by: <span className="font-medium">{currentUser?.username || 'Unknown'}</span></p>
+            <p>Active Users: <span className="font-medium">{usersInRoom}</span></p>
+            <p>Created on: <span className="font-medium">{new Date(room.createdAt).toLocaleString()}</span></p>
+          </div>
+        </div>
+        <button
+          onClick={() => navigate('/dashboard')}
+          className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-full shadow"
+        >
+          <LogOut size={16} /> Leave Room
+        </button>
+      </div>
 
+      
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+       
+        <div className="md:col-span-3 bg-black rounded-lg overflow-hidden shadow">
           {videoId ? (
-            <div className="relative w-full aspect-video rounded-lg shadow overflow-hidden">
+            <div className="relative w-full aspect-video rounded-lg overflow-hidden">
               <iframe
-                ref={playerRef}
                 className="absolute top-0 left-0 w-full h-full"
-                src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1&origin=${window.location.origin}`}
+                src={`https://www.youtube.com/embed/${videoId}`}
                 title={room.name}
                 frameBorder="0"
-                allow="autoplay; encrypted-media"
                 allowFullScreen
-                onLoad={handleYouTubeReady}
               ></iframe>
             </div>
           ) : (
@@ -195,41 +166,60 @@ function Watchroom() {
           )}
         </div>
 
-        {/* Chat Sidebar */}
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          <h2 className="flex gap-2 items-center text-purple-700 font-bold mb-2">
-            <MessagesSquare size={20} /> LIVE CHAT
+     
+        <div className="bg-[#2b1e3e] p-3 rounded-lg flex flex-col h-[400px] sm:h-full">
+          <h2 className="text-yellow-300 text-sm font-semibold mb-2 flex items-center gap-1">
+            <MessagesSquare size={16} /> Live Chat 🌞🕶️🌙
           </h2>
-          <div
-            ref={chatRef}
-            className="h-64 overflow-y-auto mb-3 p-2 border border-gray-200 rounded"
-          >
+
+       
+          <div className="flex-1 overflow-y-auto bg-[#3d2f57] p-2 rounded-md space-y-2 text-sm">
             {messages.length > 0 ? (
-              messages.map((msg, i) => (
-                <div key={i} className="mb-2 text-sm">
-                  <span className="font-semibold text-purple-700">{msg.username}: </span>
-                  <span>{msg.text}</span>
-                  <span className="text-gray-400 text-xs ml-2">{msg.time}</span>
-                </div>
-              ))
+              messages.map((msg, index) => {
+                const isSystem = msg.username === 'system';
+                const isOwn = msg.username === currentUser?.username;
+                return (
+                  <div
+                    key={index}
+                    className={`flex ${isSystem ? 'justify-center' : isOwn ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[80%] px-3 py-1 rounded-lg ${
+                        isSystem
+                          ? 'bg-yellow-500 text-black text-xs font-bold'
+                          : isOwn
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-700 text-white'
+                      }`}
+                    >
+                      {!isSystem && (
+                        <span className="block text-xs text-gray-300 font-medium">{msg.username}</span>
+                      )}
+                      <span>{msg.text}</span>
+                    </div>
+                  </div>
+                );
+              })
             ) : (
-              <p className="text-sm text-gray-600">No messages yet...</p>
+              <p className="italic text-gray-400">No messages yet...</p>
             )}
           </div>
-          <div className="flex gap-2">
+
+          
+          <div className="flex gap-2 mt-3">
             <input
               type="text"
               placeholder="Type your message..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-              className="flex-1 px-3 py-2 border rounded-lg text-sm"
+              className="flex-1 px-3 py-2 rounded bg-[#4a3d63] text-white outline-none text-sm"
             />
             <button
               onClick={sendMessage}
-              className="p-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg"
+              className="px-4 py-2 rounded bg-blue-700 hover:bg-blue-800 text-white text-sm"
             >
-              <Send size={20} />
+              Send
             </button>
           </div>
         </div>
