@@ -105,7 +105,7 @@ function Watchroom() {
   return (
     <div className="min-h-screen bg-[#f9f9f9] p-4 sm:p-6 text-gray-800">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6">
-        {/* Video & Info */}
+        
         <div className="md:col-span-3">
           <h1 className="text-2xl sm:text-3xl font-bold text-purple-700 mb-2">{room.name}</h1>
           <p className="text-sm text-gray-600 mb-1">
