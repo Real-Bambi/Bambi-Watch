@@ -5,7 +5,7 @@ import { FaBell, FaSearch, FaPlayCircle, FaDoorOpen } from 'react-icons/fa';
 import Sidebar from '../components/Sidebar';
 import CreateRoomModal from '../components/CreateRoomModal';
 import { apiClient } from '../../api/client';
-
+import { toast } from 'react-toastify';
 
 const fetcher = (url) =>
   apiClient
@@ -16,7 +16,6 @@ const fetcher = (url) =>
     })
     .then((res) => res.data);
 
-
 const getYouTubeVideoId = (url) => {
   const regex = /(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([^&?/]+)/;
   const match = url.match(regex);
@@ -26,21 +25,33 @@ const getYouTubeVideoId = (url) => {
 function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [inviteLink, setInviteLink] = useState('');
 
   const { data: userData } = useSWR('/users/me', fetcher);
   const { data, error, isLoading } = useSWR('/rooms/active', fetcher);
 
   const activeRooms = data?.rooms || [];
 
-  
   const username = userData?.username || 'Guest';
-  const profileImg = userData?.avatar || 'https://via.placeholder.com/40';
+  const profileImg = userData?.avatarUrl || 'https://via.placeholder.com/40';
 
   const yourVideos = [
     { id: 1, title: 'Reason to start coding', image: 'https://www.youtube.com/shorts/yETfkVksrxA' },
     { id: 2, title: 'AniRoll', image: 'https://www.youtube.com/watch?v=n4K1xMdRRWY' },
     { id: 3, title: 'Become a full-stack developer', image: 'https://www.youtube.com/shorts/nnG-DHWvTWM' },
   ];
+
+  const handleJoinRoom = () => {
+    if (!inviteLink.trim()) {
+      toast.error('Please enter a valid invite link');
+      return;
+    }
+    window.open(inviteLink, '_blank');
+    setInviteLink('');
+    setShowJoinModal(false);
+    toast.success('Opening room...');
+  };
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-white via-gray-50 to-blue-50 font-sans">
@@ -80,19 +91,19 @@ function Dashboard() {
             <FaPlayCircle className="w-12 h-12 mb-2" />
             <span className="font-semibold">Start a Room</span>
           </button>
-          <Link
-            to="/join-room"
+          <button
+            onClick={() => setShowJoinModal(true)}
             className="flex flex-col items-center justify-center bg-indigo-600 text-white rounded-xl p-6 shadow-lg hover:scale-105 transition"
           >
             <FaDoorOpen className="w-12 h-12 mb-2" />
             <span className="font-semibold">Join a Room</span>
-          </Link>
+          </button>
         </section>
 
         <section id="active-rooms" className="p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-gray-800">Active Rooms</h2>
-            <Link to="/all-rooms" className="text-purple-600 hover:text-purple-800">
+            <Link to="#all-rooms" className="text-purple-600 hover:text-purple-800">
               View All
             </Link>
           </div>
@@ -111,7 +122,7 @@ function Dashboard() {
                   className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition"
                 >
                   <img
-                    src={room.thumbnail || 'https://via.placeholder.com/300x200?text=Room'}
+                    src={room.thumbnail}
                     alt={room.name}
                     className="w-full h-48 object-cover"
                   />
@@ -124,7 +135,7 @@ function Dashboard() {
                             : 'bg-yellow-100 text-yellow-700'
                         }`}
                       >
-                        {room.status || 'Unknown'}
+                        {room.status || 'Active'}
                       </span>
                       {room.participantCount && (
                         <span className="text-sm text-gray-500">{room.participantCount} viewers</span>
@@ -132,7 +143,7 @@ function Dashboard() {
                     </div>
                     <h3 className="font-semibold text-lg text-gray-800">{room.name}</h3>
                     <Link
-                      to={`/room/${room._id}`}
+                      to={-1}
                       className="block text-center mt-4 bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700"
                     >
                       Join Room
@@ -144,7 +155,6 @@ function Dashboard() {
           )}
         </section>
 
-       
         <section className="p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">Your Videos</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -173,6 +183,34 @@ function Dashboard() {
             })}
           </div>
         </section>
+
+        {/* Join Room Modal */}
+        {showJoinModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-xl shadow-lg w-80">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">Join a Room</h2>
+              <input
+                type="text"
+                placeholder="Enter your invite link"
+                value={inviteLink}
+                onChange={(e) => setInviteLink(e.target.value)}
+                className="w-full p-2 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+              <button
+                onClick={handleJoinRoom}
+                className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700"
+              >
+                Join Room
+              </button>
+              <button
+                onClick={() => setShowJoinModal(false)}
+                className="mt-2 text-sm text-gray-500 hover:underline w-full"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
 
         <CreateRoomModal
           isOpen={showCreateRoomModal}
