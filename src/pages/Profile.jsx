@@ -90,7 +90,7 @@ export default function Profile() {
         <div className="flex items-center gap-6">
           <div className="relative">
             <img
-              src={data.avatarUrl || "https://via.placeholder.com/150"}
+              src={data.avatarUrl}
               alt="User Avatar"
               className="w-20 h-20 rounded-full object-cover border border-white shadow-md"
             />
@@ -151,7 +151,7 @@ export default function Profile() {
               <textarea
                 name="bio"
                 placeholder="Update your bio..."
-                defaultValue={data.bio}
+                // defaultValue={data.bio}
                 onChange={(e) =>
                   setFormData({ ...formData, bio: e.target.value })
                 }
