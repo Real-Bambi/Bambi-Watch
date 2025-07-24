@@ -103,7 +103,7 @@ function Dashboard() {
         <section id="active-rooms" className="p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-gray-800">Active Rooms</h2>
-            <Link to="/all-rooms" className="text-purple-600 hover:text-purple-800">
+            <Link to="#all-rooms" className="text-purple-600 hover:text-purple-800">
               View All
             </Link>
           </div>
@@ -122,7 +122,7 @@ function Dashboard() {
                   className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition"
                 >
                   <img
-                    src={room.thumbnail || 'https://via.placeholder.com/300x200?text=Room'}
+                    src={room.thumbnail}
                     alt={room.name}
                     className="w-full h-48 object-cover"
                   />
