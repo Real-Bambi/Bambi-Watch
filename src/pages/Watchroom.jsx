@@ -16,6 +16,9 @@ function Watchroom() {
   const [room, setRoom] = useState(null);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+  const [usersInRoom, setUsersInRoom] = useState(0);
+
+  const currentUser = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     if (loading) return;
@@ -50,23 +53,37 @@ function Watchroom() {
   useEffect(() => {
     if (!room) return;
 
-    socket.emit('joinRoom', room.id);
+    const joinedUsername = currentUser?.username || 'Guest';
+
+    socket.emit('joinRoom', { roomId: room.id, username: joinedUsername });
 
     socket.on('chatMessage', (msg) => {
       setMessages((prev) => [...prev, msg]);
     });
 
+    socket.on('roomUsers', (count) => {
+      setUsersInRoom(count);
+    });
+
+    const joinNotice = {
+      username: 'system',
+      text: `${joinedUsername} has joined the room`,
+      time: new Date().toLocaleTimeString(),
+    };
+    socket.emit('chatMessage', { roomId: room.id, ...joinNotice });
+
     return () => {
       socket.off('chatMessage');
+      socket.off('roomUsers');
       socket.emit('leaveRoom', room.id);
     };
-  }, [room]);
+  }, [room, currentUser]);
 
   const sendMessage = () => {
     if (!message.trim()) return;
 
     const newMsg = {
-      username: user?.username || 'Guest',
+      username: currentUser?.username || 'Guest',
       text: message,
       time: new Date().toLocaleTimeString(),
     };
@@ -97,12 +114,12 @@ function Watchroom() {
 
   return (
     <div className="min-h-screen bg-[#1e0e2f] text-white p-4">
-      {/* Room Header */}
+      
       <div className="mb-6 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4">
         <div className="flex flex-col">
           <h1 className="text-4xl font-bold text-purple-300 mb-2">{room.name}</h1>
           <div className="flex flex-wrap items-center gap-2">
-            <p className="text-lg font-bold  text-purple-300">Wanna Invite Friends? Just send them this link:</p>
+            <p className="text-lg font-bold text-purple-300">Wanna Invite Friends? Just send them this link:</p>
             <span className="px-2 py-1 bg-gray-800 rounded text-blue-400 text-xs break-all max-w-xs overflow-hidden">
               {roomLink}
             </span>
@@ -116,18 +133,23 @@ function Watchroom() {
               Copy
             </button>
           </div>
+          <div className="text-sm text-gray-300 mt-2">
+            <p>Created by: <span className="font-medium">{currentUser?.username || 'Unknown'}</span></p>
+            <p>Active Users: <span className="font-medium">{usersInRoom}</span></p>
+            <p>Created on: <span className="font-medium">{new Date(room.createdAt).toLocaleString()}</span></p>
+          </div>
         </div>
         <button
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/dashboard')}
           className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-full shadow"
         >
           <LogOut size={16} /> Leave Room
         </button>
       </div>
 
-      {/* Main Content */}
+      
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
-        {/* Video Player */}
+       
         <div className="md:col-span-3 bg-black rounded-lg overflow-hidden shadow">
           {videoId ? (
             <div className="relative w-full aspect-video rounded-lg overflow-hidden">
@@ -144,18 +166,18 @@ function Watchroom() {
           )}
         </div>
 
-        {/* Chat Sidebar */}
+     
         <div className="bg-[#2b1e3e] p-3 rounded-lg flex flex-col h-[400px] sm:h-full">
           <h2 className="text-yellow-300 text-sm font-semibold mb-2 flex items-center gap-1">
             <MessagesSquare size={16} /> Live Chat 🌞🕶️🌙
           </h2>
 
-          {/* Messages */}
+       
           <div className="flex-1 overflow-y-auto bg-[#3d2f57] p-2 rounded-md space-y-2 text-sm">
             {messages.length > 0 ? (
               messages.map((msg, index) => {
                 const isSystem = msg.username === 'system';
-                const isOwn = msg.username === user?.username;
+                const isOwn = msg.username === currentUser?.username;
                 return (
                   <div
                     key={index}
@@ -183,7 +205,7 @@ function Watchroom() {
             )}
           </div>
 
-          {/* Message Input */}
+          
           <div className="flex gap-2 mt-3">
             <input
               type="text"
