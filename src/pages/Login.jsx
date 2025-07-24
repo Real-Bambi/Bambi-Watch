@@ -3,6 +3,7 @@ import Goodbg from "../assets/loginin.jpg";
 import { Link, useNavigate } from "react-router";
 import { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -47,19 +48,21 @@ export default function Login() {
         navigate("/dashboard");
       } else {
         console.error("No token received");
+        toast.success("Login Successful");
       }
     } catch (error) {
       console.error("Login failed:", error);
+      toast.error("Login Failed");
     }
   };
 
   return (
     <div
-      className="bg-cover bg-center h-screen flex justify-center items-center"
+      className="bg-cover bg-center min-h-screen flex justify-center items-center px-4 py-10"
       style={{ backgroundImage: `url(${Goodbg})` }}
     >
-      <div className="bg-[rgba(255,255,255,0.2)] shadow-[0_20px_50px_rgba(0,0,0,0.6)] flex flex-col md:flex-row w-[90%] h-auto md:h-[80vh] overflow-hidden rounded-lg">
-        
+      <div className="bg-[rgba(255,255,255,0.2)] shadow-[0_20px_50px_rgba(0,0,0,0.6)] flex flex-col md:flex-row w-[90%] max-w-6xl h-auto md:h-[80vh] overflow-hidden rounded-lg">
+
         {/* Login Form */}
         <div className="w-full md:w-[50%] flex justify-center items-center p-6 md:p-10">
           <form onSubmit={loginUser} className="w-full max-w-md text-white">
@@ -117,5 +120,6 @@ export default function Login() {
         </div>
       </div>
     </div>
+
   );
 }
