@@ -1,7 +1,7 @@
 
-import React, { useState, useEffect, useContext, useRef } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { FilmIcon, Clock, Camera, History, Play, Star, Clapperboard } from "lucide-react";
-import Navbar from "../components/Navbar";
+
 import Footer from "../components/Footer";
 import { AuthContext } from "../context/AuthContext";
 import toast from "react-hot-toast";
@@ -10,6 +10,11 @@ import UserImage from '../assets/userid.avif';
 import Movie1Image from '../assets/movie1.jpg';
 import Movie2Image from '../assets/movie2.jpg';
 import Movie3Image from '../assets/movie3.jpg';
+import { Link } from "react-router";
+import { CircleChevronLeft } from "lucide-react";
+
+
+
 
 export default function Profile() {
   const { user: authUser } = useContext(AuthContext); // Get user from AuthContext
@@ -19,6 +24,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(false); // For form submission loading
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const avatarFileInputRef = useRef(null); 
+
 
   // Load profile on mount
   useEffect(() => {
@@ -77,9 +83,17 @@ export default function Profile() {
 
   return (
     <div className="bg-[#0F172A]">
-      <Navbar />
+<div className="bg-[#0F172A] p-4">
+  <Link to="/dashboard" aria-label="Go back to dashboard">
+    <button className="flex items-center gap-2 bg-purple-700 text-white px-4 py-2 rounded-xl hover:bg-purple-800 transition-all duration-200 ml-14">
+      <CircleChevronLeft className="w-5 h-5" />
+      Go Back
+    </button>
+  </Link>
+</div>
 
-      <div className="flex flex-col md:flex-row bg-gradient-to-r from-purple-600 to-cyan-500 justify-between items-center mt-10 rounded-xl p-6 w-[90%] mx-auto shadow-md">
+
+      <div className="flex flex-col md:flex-row bg-gradient-to-r from-purple-600 to-cyan-500 justify-between items-center mt-4 rounded-xl p-6 w-[90%] mx-auto shadow-md">
         <div className="flex items-center gap-6">
           <div className="relative">
             <img
@@ -106,7 +120,7 @@ export default function Profile() {
         </div>
         <div>
           <button
-            className="bg-white px-6 py-2 m-4 rounded text-[#4F84E7] hover:text-blue-950"
+            className="bg-white px-6 py-2 m-4 rounded text-black hover:text-[#4F84E7]" 
             onClick={() => setIsModalOpen(true)}
           >
             Edit Profile
