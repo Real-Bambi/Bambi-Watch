@@ -64,7 +64,7 @@ export default function Home() {
       </section>
 
 
-      {/* Second Section */}
+      {/* Second Section- About */}
       <section className="lg:h-[70vh] sm:h-[100vh] md:h-[100vh]" id="about">
         
           <div className="flex flex-col justify-center text-center mb-10">
