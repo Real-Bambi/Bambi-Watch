@@ -38,6 +38,7 @@ export default function SignUp() {
             console.log(response);
             toast.success("Sign Up Successful");
             navigate("/login");
+            
         } catch (error) {
             console.error(error);
             toast.error("Sign Up Failed");
@@ -46,16 +47,17 @@ export default function SignUp() {
 
     return (
         <div
-            className="bg-cover bg-center h-screen flex justify-center items-center"
+            className="bg-cover bg-center min-h-screen flex justify-center items-center px-4 py-10"
             style={{ backgroundImage: `url(${Nicebg})` }}
         >
             <div
-                className="bg-cover bg-center h-[80vh] w-[90%] shadow-[0_20px_50px_rgba(0,0,0,0.6)] flex flex-row"
-                style={{ backgroundImage: `url(${Nicebg})` }}
+                className="bg-cover bg-center w-full max-w-6xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] flex flex-col md:flex-row overflow-hidden rounded-xl"
+                style={{ backgroundImage: `url(${Nicebg})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover' }}
             >
-                <div className="w-[50%] flex flex-col justify-center items-center bg-[rgba(0,0,0,0.5)]">
-                    <p className="text-white font-bold text-5xl">Let's get started!</p>
-                    <p className="flex justify-center text-center pt-6 text-2xl text-white italic">
+                {/* Left Section */}
+                <div className="w-full md:w-1/2 flex flex-col justify-center items-center bg-[rgba(0,0,0,0.5)] px-6 py-12 text-center">
+                    <p className="text-white font-bold text-4xl md:text-5xl">Let's get started!</p>
+                    <p className="pt-6 text-lg md:text-2xl text-white italic">
                         Already a Member?
                         <Link to="/login" className="text-purple-500 font-semibold hover:underline ml-2">
                             Log In
@@ -63,26 +65,28 @@ export default function SignUp() {
                     </p>
                 </div>
 
-                <div className="w-[40%] flex justify-center items-center">
+                {/* Right Section */}
+                <div className="w-full md:w-1/2 flex justify-center items-center px-6 py-12 bg-[rgba(255,255,255,0.1)] backdrop-blur-md">
                     <form
                         onSubmit={newUser}
-                        className="bg-[rgba(255,255,255,0.2)] p-8 rounded-xl w-full text-white"
+                        className="w-full max-w-md bg-[rgba(255,255,255,0.2)] p-6 md:p-8 rounded-xl text-white backdrop-blur-md"
                     >
-                        <div className="flex flex-col justify-center text-center pb-4">
+                        {/* Header */}
+                        <div className="flex flex-col text-center pb-6">
                             <p className="font-bold text-3xl">Watch Together</p>
-                            <p className="font-bold text-lg text-gray-400">
-                                Watch movies with friends, anywhere
-                            </p>
+                            <p className="text-lg text-gray-300 font-semibold">Movies with friends, anywhere</p>
                         </div>
 
-                        <div className="flex flex-col pb-4">
+                        {/* Input Fields */}
+                         <div className="flex flex-col pb-4">
                             <label htmlFor="username">Username</label>
                             <input
                                 type="text"
                                 name="username"
                                 value={username}
                                 onChange={(e) => setUserName(e.target.value)}
-                                className="border border-[rgba(255,255,255,0.4)] p-2 rounded-md"
+                                className="border border-[rgba(255,255,255,0.4)] p-2 rounded-md text-black"
+                                required
                             />
                         </div>
 
@@ -93,7 +97,8 @@ export default function SignUp() {
                                 name="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="border border-[rgba(255,255,255,0.4)] p-2 rounded-md"
+                                className="border border-[rgba(255,255,255,0.4)] p-2 rounded-md text-black"
+                                required
                             />
                         </div>
 
@@ -104,7 +109,8 @@ export default function SignUp() {
                                 name="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="border border-[rgba(255,255,255,0.4)] p-2 rounded-md"
+                                className="border border-[rgba(255,255,255,0.4)] p-2 rounded-md text-black"
+                                required
                             />
                         </div>
 
@@ -115,13 +121,14 @@ export default function SignUp() {
                                 name="confirmPassword"
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                className="border border-[rgba(255,255,255,0.4)] p-2 rounded-md"
+                                className="border border-[rgba(255,255,255,0.4)] p-2 rounded-md text-black"
+                                required
                             />
                         </div>
-
+                        {/* Submit */}
                         <button
                             type="submit"
-                            className="p-2 w-full rounded-md border bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
+                            className="p-2 w-full mt-2 rounded-md text-white font-semibold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:opacity-90 transition-all duration-300"
                         >
                             Sign Up
                         </button>
@@ -129,5 +136,6 @@ export default function SignUp() {
                 </div>
             </div>
         </div>
+
     );
 }

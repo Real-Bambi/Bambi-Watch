@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
 import { FaFacebook, FaTwitter, FaInstagram, FaEnvelope } from 'react-icons/fa';
+import Footer from '../components/Footer'; 
 
 function ContactPage() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -49,22 +52,14 @@ function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white px-6 py-16 text-black flex flex-col items-center relative">
+    <div className="flex flex-col min-h-screen bg-white text-black">
       <style>
         {`
           @keyframes slide-in {
-            0% {
-              transform: translateX(-100%);
-              opacity: 0;
-            }
-            100% {
-              transform: translateX(0);
-              opacity: 1;
-            }
+            0% { transform: translateX(-100%); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
           }
-          .animate-slide-in {
-            animation: slide-in 0.4s ease-out;
-          }
+          .animate-slide-in { animation: slide-in 0.4s ease-out; }
           .spinner {
             border: 3px solid rgba(255,255,255,0.3);
             border-top: 3px solid white;
@@ -80,81 +75,98 @@ function ContactPage() {
         `}
       </style>
 
-      <div className="max-w-2xl w-full bg-white p-8 shadow-xl rounded-xl">
-        <h2 className="text-4xl font-bold text-purple-700 mb-6 text-center">
-          Get in Touch with Bambi Watch
-        </h2>
-        <p className="text-gray-700 text-center mb-8">
-          We'd love to hear from you. Whether it's feedback, partnership, or general inquiries.
-        </p>
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <input
-              type="text"
-              placeholder="Full Name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
-            />
-            {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name}</p>}
-          </div>
-
-          <div>
-            <input
-              type="email"
-              placeholder="Email Address"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
-            />
-            {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
-          </div>
-
-          <div>
-            <textarea
-              rows="5"
-              placeholder="Your Message"
-              value={formData.message}
-              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
-            ></textarea>
-            {errors.message && <p className="text-red-600 text-sm mt-1">{errors.message}</p>}
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-purple-700 text-white py-3 rounded-md font-semibold hover:bg-purple-800 transition flex justify-center items-center"
-          >
-            {loading ? <div className="spinner"></div> : 'Send Message'}
-          </button>
-        </form>
-
-        <div className="mt-10 text-center">
-          <h3 className="text-lg font-medium text-purple-700 mb-3">Follow Us</h3>
-          <div className="flex justify-center gap-5 text-purple-600 text-2xl">
-            <a href="https://facebook.com" className="hover:text-purple-800">
-              <FaFacebook />
-            </a>
-            <a href="https://twitter.com" className="hover:text-purple-800">
-              <FaTwitter />
-            </a>
-            <a href="https://instagram.com" className="hover:text-purple-800">
-              <FaInstagram />
-            </a>
-            <a href="mailto:cyrusbarrow610@gmail.com" className="hover:text-purple-800">
-              <FaEnvelope />
-            </a>
-          </div>
-        </div>
+      {/* Back Button */}
+      <div className="px-4 pt-4">
+        <button
+          onClick={() => navigate(-1)}
+          className="text-purple-700 hover:text-purple-900 font-semibold text-sm"
+        >
+          ← Back
+        </button>
       </div>
 
+      
+      <main className="flex-grow flex items-center justify-center px-4">
+        <div className="w-full max-w-2xl bg-white p-8 shadow-xl rounded-xl">
+          <h2 className="text-4xl font-bold text-purple-700 mb-6 text-center">
+            Get in Touch with Bambi Watch
+          </h2>
+          <p className="text-gray-700 text-center mb-8">
+            We'd love to hear from you. Whether it's feedback, partnership, or general inquiries.
+          </p>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <input
+                type="text"
+                placeholder="Full Name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+              />
+              {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name}</p>}
+            </div>
+
+            <div>
+              <input
+                type="email"
+                placeholder="Email Address"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+              />
+              {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
+            </div>
+
+            <div>
+              <textarea
+                rows="5"
+                placeholder="Your Message"
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+              ></textarea>
+              {errors.message && <p className="text-red-600 text-sm mt-1">{errors.message}</p>}
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-purple-700 text-white py-3 rounded-md font-semibold hover:bg-purple-800 transition flex justify-center items-center"
+            >
+              {loading ? <div className="spinner"></div> : 'Send Message'}
+            </button>
+          </form>
+
+          <div className="mt-10 text-center">
+            <h3 className="text-lg font-medium text-purple-700 mb-3">Follow Us</h3>
+            <div className="flex justify-center gap-5 text-purple-600 text-2xl">
+              <a href="https://facebook.com" className="hover:text-purple-800">
+                <FaFacebook />
+              </a>
+              <a href="https://twitter.com" className="hover:text-purple-800">
+                <FaTwitter />
+              </a>
+              <a href="https://instagram.com" className="hover:text-purple-800">
+                <FaInstagram />
+              </a>
+              <a href="mailto:cyrusbarrow610@gmail.com" className="hover:text-purple-800">
+                <FaEnvelope />
+              </a>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      
       {success && (
-        <div className="fixed top-6 right-6 bg-green-600 text-white px-5 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-slide-in">
+        <div className="fixed top-6 right-6 bg-green-600 text-white px-5 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-slide-in z-50">
           ✅ Message sent successfully!
         </div>
       )}
+
+     
+      <Footer />
     </div>
   );
 }
