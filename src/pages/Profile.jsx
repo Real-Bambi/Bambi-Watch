@@ -1,12 +1,10 @@
 
 import { useState, useEffect, useContext, useRef } from "react";
 import { FilmIcon, Clock, Camera, History, Play, Star, Clapperboard } from "lucide-react";
-
-import Footer from "../components/Footer";
 import { AuthContext } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import { apiClient } from "../api/client"; 
-import UserImage from '../assets/userid.avif';
+import UserImage from '../assets/User.png';
 import Movie1Image from '../assets/movie1.jpg';
 import Movie2Image from '../assets/movie2.jpg';
 import Movie3Image from '../assets/movie3.jpg';
@@ -221,7 +219,7 @@ export default function Profile() {
           </div>
         </div>
       </section>
-      <Footer />
+      
     </div>
   );
 }
