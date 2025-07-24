@@ -22,18 +22,18 @@ export default function Footer() {
         <div>
           <h2 className="text-white text-lg font-bold mb-4">Product</h2>
           <ul className="space-y-2 text-sm">
-            <li><Link to="/features" className="hover:text-white">Features</Link></li>
-            <li><Link to="/pricing" className="hover:text-white">Pricing</Link></li>
-            <li><Link to="/api" className="hover:text-white">API</Link></li>
+            <li><Link to="#features" className="hover:text-white">Features</Link></li>
+            <li><Link to="#pricing" className="hover:text-white">Pricing</Link></li>
+            <li><Link to="#api" className="hover:text-white">API</Link></li>
           </ul>
         </div>
 
         <div>
           <h2 className="text-white text-lg font-bold mb-4">Company</h2>
           <ul className="space-y-2 text-sm">
-            <li><Link to="/about" className="hover:text-white">About</Link></li>
-            <li><Link to="/blog" className="hover:text-white">Blog</Link></li>
-            <li><Link to="/careers" className="hover:text-white">Careers</Link></li>
+            <li><Link to="#about" className="hover:text-white">About</Link></li>
+            <li><Link to="#blog" className="hover:text-white">Blog</Link></li>
+            <li><Link to="#careers" className="hover:text-white">Careers</Link></li>
           </ul>
         </div>
 
@@ -41,9 +41,9 @@ export default function Footer() {
         <div>
           <h2 className="text-white text-lg font-bold mb-4">Support</h2>
           <ul className="space-y-2 text-sm">
-            <li><Link to="/help" className="hover:text-white">Help Center</Link></li>
+            <li><Link to="#help" className="hover:text-white">Help Center</Link></li>
             <li><Link to="/contact" className="hover:text-white">Contact Us</Link></li>
-            <li><Link to="/privacy" className="hover:text-white">Privacy Policy</Link></li>
+            <li><Link to="#privacy" className="hover:text-white">Privacy Policy</Link></li>
           </ul>
         </div>
       </div>
