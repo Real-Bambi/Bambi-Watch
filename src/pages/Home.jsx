@@ -64,8 +64,8 @@ export default function Home() {
       </section>
 
 
-      {/* Second Section- About */}
-      <section className="lg:h-[70vh] sm:h-[100vh] md:h-[100vh]" id="about">
+      {/* Second Section  */}
+      <section className="lg:h-[70vh] sm:h-[100vh] md:h-[100vh]" >
         
           <div className="flex flex-col justify-center text-center mb-10">
             <p className="text-4xl font-bold">Why Choose Bambi Watch?</p>
@@ -93,8 +93,8 @@ export default function Home() {
 
       </section>
 
-      {/* Third Section */}
-      <section
+      {/* Third Section-About */}
+      <section id="about"
         className="flex flex-col justify-center bg-cover bg-center py-16 px-6 md:px-16"
         style={{ backgroundImage: `url(${Wavy})` }}
       >
@@ -103,10 +103,10 @@ export default function Home() {
           <div className="w-full lg:w-[50%] space-y-6">
             <p className="text-4xl md:text-5xl font-bold text-gray-800">About Bambi Watch</p>
             <p className="text-[#4B5563] text-lg">
-              Born from the simple desire to watch movies with friends during challenging times, SyncWatch has evolved into the premier platform for synchronized entertainment experiences.
+              Born from the simple desire to watch movies with friends during challenging times, Bambi Watch has evolved into the premier platform for synchronized entertainment experiences.
             </p>
             <p className="text-[#4B5563] text-lg">
-              Our mission is to eliminate the barriers of distance and bring people together through shared entertainment. Whether you're separated by miles or continents, SyncWatch ensures that every laugh, gasp, and tear is shared simultaneously.
+              Our mission is to eliminate the barriers of distance and bring people together through shared entertainment. Whether you're separated by miles or continents, Bambi Watch ensures that every laugh, gasp, and tear is shared simultaneously.
             </p>
 
             {/* Stats Grid */}
