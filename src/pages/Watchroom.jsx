@@ -88,23 +88,7 @@ function Watchroom() {
     };
   }, [room]);
 
-  useEffect(() => {
-  if (!room) return;
-
-  socket.emit('joinRoom', room.id);
-
-  // Only add this once
-  const handleMessage = (msg) => {
-    setMessages((prev) => [...prev, msg]);
-  };
-
-  socket.on('chatMessage', handleMessage);
-
-  return () => {
-    socket.off('chatMessage', handleMessage);
-    socket.emit('leaveRoom', room.id);
-  };
-}, [room]);
+  
 
   // Auto-scroll chat
   useEffect(() => {
