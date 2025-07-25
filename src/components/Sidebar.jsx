@@ -55,7 +55,7 @@ function Sidebar() {
         
         <div className="flex items-center p-6 border-b">
           <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center text-white">
-            <FaPlay className="w-6 h-6" />
+           <Link to="/"> <FaPlay className="w-6 h-6" /></Link>
           </div>
           <Link to="/" className="ml-3 text-2xl font-bold text-gray-800 hidden md:block">
             Bambi Watch

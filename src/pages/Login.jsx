@@ -14,6 +14,8 @@ export default function Login() {
     password: ""
   });
 
+  const [loading, setLoading] = useState(false); // 👈 loading state
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -23,6 +25,8 @@ export default function Login() {
 
   const loginUser = async (e) => {
     e.preventDefault();
+    setLoading(true); // 👈 start loading
+
     try {
       const response = await apiClient.post("/auth/login", formData, {
         headers: {
@@ -30,29 +34,25 @@ export default function Login() {
         }
       });
 
-      console.log("Login successful:", response);
-
       const { token, id, username, email } = response.data;
 
       if (token) {
-        // ✅ Save token for API authentication
         localStorage.setItem("token", token);
-
-        // ✅ Save basic user data
         localStorage.setItem("user", JSON.stringify({ id, username, email }));
-
-        // ✅ Update global auth context
         login(response.data);
-
-        // ✅ Navigate to dashboard
-        navigate("/dashboard");
-      } else {
-        console.error("No token received");
         toast.success("Login Successful");
+
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 1000); // 👈 optional delay
+      } else {
+        toast.error("Login failed: No token received");
       }
     } catch (error) {
       console.error("Login failed:", error);
       toast.error("Login Failed");
+    } finally {
+      setLoading(false); // 👈 stop loading
     }
   };
 
@@ -101,9 +101,10 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-full p-2 rounded-md bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:opacity-90 transition"
+              disabled={loading}
+              className="w-full p-2 rounded-md bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:opacity-90 transition disabled:opacity-50"
             >
-              Login
+              {loading ? "Logging in..." : "Login"}
             </button>
           </form>
         </div>
@@ -120,6 +121,5 @@ export default function Login() {
         </div>
       </div>
     </div>
-
   );
 }

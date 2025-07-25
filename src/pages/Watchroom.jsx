@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import { apiClient } from '../api/client'; 
-import socket from '../api/socket'; 
+import { apiClient } from '../api/client';
+import socket from '../api/socket';
 import { AuthContext } from '../context/AuthContext';
-import toast from 'react-hot-toast'; // 
-import { Copy, Send, MessagesSquare } from 'lucide-react'; 
+import toast from 'react-hot-toast';
+import { Copy, Send, MessagesSquare } from 'lucide-react';
 
 // Helper function to format an ISO date string into a user-friendly time string (e.g., "02:30 PM")
 const formatTime = (isoString) => {
@@ -29,16 +29,19 @@ function Watchroom() {
 
   const [room, setRoom] = useState(null);
   const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState(''); 
-  const [usersWatching, setUsersWatching] = useState(0); 
-  const [copied, setCopied] = useState(false); 
-  const [activeRooms, setActiveRooms] = useState([]); 
+  const [newMessage, setNewMessage] = useState('');
+  const [usersWatching, setUsersWatching] = useState(0);
+  const [copied, setCopied] = useState(false);
+  const [activeRooms, setActiveRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const messagesEndRef = useRef(null); // For chat auto-scroll
   const playerRef = useRef(null); // For YouTube player instance
   const headerRef = useRef(null); // For dynamic header height calculation (from second code)
   const [headerHeight, setHeaderHeight] = useState(0); // From second code
+
+  // NEW: Flag to prevent re-emitting when processing a remote command
+  const isProcessingRemoteCommand = useRef(false);
 
   const inviteLink = `${window.location.origin}/watchroom/${id}`;
 
@@ -58,7 +61,7 @@ function Watchroom() {
     };
   }, []);
 
-  // Main useEffect for fetching room/messages and setting up Socket.IO 
+  // Main useEffect for fetching room/messages and setting up Socket.IO
   useEffect(() => {
     let isMounted = true;
     setIsLoading(true);
@@ -81,8 +84,6 @@ function Watchroom() {
           setMessages(messagesRes.data);
 
           // Configure and connect Socket.IO
-          // Assuming the 'token' for socket.auth is handled by the 'api' client or AuthContext,
-          // but explicitly setting it from localStorage as per second code's robustness
           socket.auth = { token: localStorage.getItem('token') };
           if (!socket.connected) { // Connect only if not already connected
               socket.connect();
@@ -128,14 +129,13 @@ function Watchroom() {
       socket.off('video:pause', handlePause);
       socket.off('video:seek', handleSeek);
       // Only disconnect if this component is the last one using the socket (optional, depends on app structure)
-      // This ensures that the socket is disconnected when the component is unmounted
       if (socket.connected) {
           socket.disconnect();
       }
     };
   }, [id, user, loading, navigate]); // Dependencies adjusted based on combined logic
 
-  // Fetch active rooms every few seconds 
+  // Fetch active rooms every few seconds
   useEffect(() => {
     const fetchActiveRooms = async () => {
       try {
@@ -161,24 +161,37 @@ function Watchroom() {
     setMessages((prev) => [...prev, { system: true, message, timestamp }]);
   };
 
-  // Video Control Handlers ( adapted for direct YT API control)
+  // MODIFIED: Video Control Handlers to set/reset isProcessingRemoteCommand flag
   const handlePlay = ({ time }) => {
     if (playerRef.current) {
+      isProcessingRemoteCommand.current = true; // Set flag
       playerRef.current.seekTo(time, true);
       playerRef.current.playVideo();
+      // Reset flag after a short delay to allow player state to settle
+      setTimeout(() => {
+        isProcessingRemoteCommand.current = false;
+      }, 200); // 200ms usually sufficient for player to update state
     }
   };
 
   const handlePause = ({ time }) => {
     if (playerRef.current) {
+      isProcessingRemoteCommand.current = true; // Set flag
       playerRef.current.seekTo(time, true);
       playerRef.current.pauseVideo();
+      setTimeout(() => {
+        isProcessingRemoteCommand.current = false;
+      }, 200);
     }
   };
 
   const handleSeek = ({ time }) => {
     if (playerRef.current) {
+      isProcessingRemoteCommand.current = true; // Set flag
       playerRef.current.seekTo(time, true);
+      setTimeout(() => {
+        isProcessingRemoteCommand.current = false;
+      }, 200);
     }
   };
 
@@ -189,19 +202,27 @@ function Watchroom() {
     }
   }, [messages]);
 
-  // YouTube Iframe API loading and player initialization
+  // MODIFIED YOUTUBE PLAYER EFFECT FOR ROBUSTNESS AND CORRECT URL
   useEffect(() => {
-    if (!room || !room.videoId) return;
+    if (!room || !room.videoId) {
+      // If no videoId, ensure any existing player is destroyed
+      if (playerRef.current && typeof playerRef.current.destroy === 'function') {
+        playerRef.current.destroy();
+        playerRef.current = null;
+      }
+      return;
+    }
 
-    // Load the IFrame Player API code asynchronously.
-    const tag = document.createElement('script');
-    // CORRECTED YouTube API URL
-    tag.src = 'https://www.youtube.com/iframe_api';
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    // This internal function handles the creation/re-creation of the player
+    const createOrUpdatePlayer = () => {
+      // If a player instance already exists, destroy it before creating a new one
+      if (playerRef.current && typeof playerRef.current.destroy === 'function') {
+        console.log("Destroying existing YouTube player instance before creating new.");
+        playerRef.current.destroy();
+        playerRef.current = null; // Clear the ref
+      }
 
-    // This global function will be called by the IFrame Player API when the video player is ready.
-    window.onYouTubeIframeAPIReady = () => {
+      console.log("Creating new YouTube player instance for videoId:", room.videoId);
       playerRef.current = new window.YT.Player('player', {
         videoId: room.videoId,
         events: {
@@ -210,37 +231,78 @@ function Watchroom() {
         playerVars: {
           enablejsapi: 1,
           origin: window.location.origin,
+          controls: 1, // Ensure controls are visible for user interaction
+          modestbranding: 1, // Less YouTube branding
+          rel: 0, // Prevent related videos from showing at end
+          autoplay: 0 // Crucial: Start paused, let sync handle play
         },
       });
     };
 
+    // Define onPlayerStateChange within this effect scope
     const onPlayerStateChange = (event) => {
       const player = playerRef.current;
       if (!player) return;
 
+      // IMPORTANT: If we are currently processing a remote command, DO NOT emit
+      // This prevents feedback loops where reacting to a remote command causes us to re-emit
+      if (isProcessingRemoteCommand.current) {
+        console.log("Skipping emit: Player state changed due to remote command.");
+        return;
+      }
+
       const time = player.getCurrentTime();
 
       if (event.data === window.YT.PlayerState.PLAYING) {
+        console.log("Local user initiated PLAY. Emitting video:play");
         socket.emit('video:play', { roomId: id, time });
-      }
-      if (event.data === window.YT.PlayerState.PAUSED) {
+      } else if (event.data === window.YT.PlayerState.PAUSED) { // Use else if for distinct states
+        console.log("Local user initiated PAUSE. Emitting video:pause");
         socket.emit('video:pause', { roomId: id, time });
       }
-      // If player is buffering AND the time has changed (manual seek or initial load seek)
-      if (event.data === window.YT.PlayerState.BUFFERING && player.getCurrentTime() !== time) {
-          socket.emit('video:seek', { roomId: id, time: player.getCurrentTime() });
-      }
+      // REMOVED: Logic for emitting 'video:seek' on BUFFERING state change.
+      // This was causing the self-inflicted seek loops.
+      // User-initiated seeks should be triggered by explicit UI interactions (e.g., seek bar).
+      // Remote seeks are handled by handleSeek, which sets the flag.
+      // If the player buffers due to network, we generally don't want to re-emit a seek.
     };
 
+    // Load the YouTube IFrame API script if not already loaded
+    // This ensures the script is loaded ONCE per page load
+    if (!window.YT || !window.YT.Player) {
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api'; // CORRECTED YouTube API URL
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // Set the global callback if the API isn't ready yet
+        // Ensure this is only set ONCE to avoid multiple calls if script reloads.
+        // It should be defined before the script potentially calls it.
+        if (!window.onYouTubeIframeAPIReady) {
+            window.onYouTubeIframeAPIReady = () => {
+                console.log("YouTube Iframe API script loaded and ready.");
+                createOrUpdatePlayer(); // Now that API is ready, create the player
+            };
+        }
+    } else {
+        // If API is already loaded, create/update player directly
+        console.log("YouTube API already loaded, creating/updating player directly.");
+        createOrUpdatePlayer();
+    }
+
+    // Cleanup function: This runs when the component unmounts or before the effect re-runs
     return () => {
-      // Clean up the global function when component unmounts
-      window.onYouTubeIframeAPIReady = null;
-      // Destroy the player if it exists to prevent memory leaks
       if (playerRef.current && typeof playerRef.current.destroy === 'function') {
+        console.log("Component unmounting or effect re-running, destroying YouTube player.");
         playerRef.current.destroy();
+        playerRef.current = null; // Important: Clear the ref after destroying
       }
+      // Generally, don't nullify global window.onYouTubeIframeAPIReady unless you are 100% sure
+      // this is the only component setting it and you need it reset globally.
+      // Leaving it defined often causes no harm if the player management within createOrUpdatePlayer is robust.
+      // window.onYouTubeIframeAPIReady = null;
     };
-  }, [room, id]); // Re-run if room or id changes
+  }, [room, id]); // Dependencies: Effect re-runs if 'room' data or 'id' changes
 
   // Send message function (from second code's logic)
   const sendMessage = () => {
@@ -288,7 +350,7 @@ function Watchroom() {
   if (!room) {
     return (
       <div className="flex items-center justify-center h-screen text-red-400 bg-gray-900">
-        Room not found or something went wrong.
+        Room is loading, please wait...
       </div>
     );
   }
@@ -317,11 +379,11 @@ function Watchroom() {
                   type="text"
                   readOnly
                   value={inviteLink}
-                  className="flex-1 border border-gray-700 rounded-lg px-3 py-1 text-sm bg-gray-800 text-gray-200" 
+                  className="flex-1 border border-gray-700 rounded-lg px-3 py-1 text-sm bg-gray-800 text-gray-200"
                 />
                 <button
                   onClick={copyLink}
-                  className="flex items-center gap-1 px-3 py-2 bg-violet-600 text-white rounded-md hover:bg-violet-700 text-sm" 
+                  className="flex items-center gap-1 px-3 py-2 bg-violet-600 text-white rounded-md hover:bg-violet-700 text-sm"
                 >
                   <Copy size={16} /> {copied ? 'Copied!' : 'Copy'}
                 </button>

@@ -40,9 +40,9 @@ export default function Home() {
 
             <div className="flex items-center gap-6 pt-2">
               <a href="#features">
-                <button className="bg-purple-600 text-white font-semibold px-6 py-3 rounded-xl">
+                <Link to="/sign-up" className="bg-purple-600 text-white font-semibold px-6 py-3 rounded-xl">
                   Get Started
-                </button>
+                </Link>
               </a>
               <div className="bg-white rounded-full p-2 shadow-md">
                 <Link to="/sign-up">

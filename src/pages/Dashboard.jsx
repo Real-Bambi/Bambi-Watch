@@ -6,6 +6,7 @@ import Sidebar from '../components/Sidebar';
 import CreateRoomModal from '../components/CreateRoomModal';
 import { apiClient } from '../../api/client';
 import { toast } from 'react-toastify';
+import UserImage from '../assets/userid.avif';
 
 const fetcher = (url) =>
   apiClient
@@ -34,7 +35,7 @@ function Dashboard() {
   const activeRooms = data?.rooms || [];
 
   const username = userData?.username || 'Guest';
-  const profileImg = userData?.avatarUrl || 'https://via.placeholder.com/40';
+  const profileImg = userData?.avatarUrl || UserImage;
 
   const yourVideos = [
     { id: 1, title: 'Reason to start coding', image: 'https://www.youtube.com/shorts/yETfkVksrxA' },
@@ -72,8 +73,8 @@ function Dashboard() {
             <FaBell className="w-6 h-6 text-gray-600" />
             <img
               src={profileImg}
-              alt="User"
-              className="w-10 h-10 rounded-full border-2 border-purple-500"
+              alt="User Avatar"
+              className="w-15 h-15 rounded-full border-2 border-purple-500"
             />
           </div>
         </header>
