@@ -3,7 +3,6 @@ import { ToastContainer } from "react-toastify";
 import { AuthProvider } from "./context/AuthContext";
 
 // your routes (unchanged)
-import Register from "./pages/Register";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Home from "./pages/Home";
@@ -16,7 +15,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 const bambiWatchRouter = createBrowserRouter([
   { path: "/", element: <Home /> },
-  { path: "/register", element: <Register /> },
   { path: "/login", element: <Login /> },
   { path: "/sign-up", element: <SignUp /> },
   {
