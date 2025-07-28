@@ -6,7 +6,7 @@ import Sidebar from '../components/Sidebar';
 import CreateRoomModal from '../components/CreateRoomModal';
 import { apiClient } from '../../api/client';
 import { toast } from 'react-toastify';
-import UserImage from '../assets/userid.avif';
+import UserImage from '../assets/User.png';
 
 const fetcher = (url) =>
   apiClient
