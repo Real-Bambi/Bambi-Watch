@@ -6,13 +6,11 @@ import { AuthContext } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { Copy, Send, MessagesSquare } from 'lucide-react';
 
-// Helper function to format an ISO date string into a user-friendly time string (e.g., "02:30 PM")
 const formatTime = (isoString) => {
   const date = new Date(isoString);
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 };
 
-// Simple Loader Component
 const Loader = () => (
   <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-75 z-50">
     <div className="flex flex-col items-center">
@@ -23,10 +21,9 @@ const Loader = () => (
 );
 
 function Watchroom() {
-  const { id } = useParams(); // roomId
+  const { id } = useParams();
   const navigate = useNavigate();
-  const { user, loading } = useContext(AuthContext); // Use 'user' directly from AuthContext
-
+  const { user, loading } = useContext(AuthContext); 
   const [room, setRoom] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
@@ -35,17 +32,15 @@ function Watchroom() {
   const [activeRooms, setActiveRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const messagesEndRef = useRef(null); // For chat auto-scroll
-  const playerRef = useRef(null); // For YouTube player instance
-  const headerRef = useRef(null); // For dynamic header height calculation (from second code)
-  const [headerHeight, setHeaderHeight] = useState(0); // From second code
+  const messagesEndRef = useRef(null);
+  const playerRef = useRef(null);
+  const headerRef = useRef(null);
+  const [headerHeight, setHeaderHeight] = useState(0);
 
-  // NEW: Flag to prevent re-emitting when processing a remote command
   const isProcessingRemoteCommand = useRef(false);
 
   const inviteLink = `${window.location.origin}/watchroom/${id}`;
 
-  // This ref is specifically for measuring the height of the header section dynamically
   useEffect(() => {
     const measureHeader = () => {
       if (headerRef.current) {
@@ -61,15 +56,14 @@ function Watchroom() {
     };
   }, []);
 
-  // Main useEffect for fetching room/messages and setting up Socket.IO
   useEffect(() => {
     let isMounted = true;
     setIsLoading(true);
 
     const init = async () => {
-      if (loading) return; // Wait for auth loading to complete
-      if (!user) { // If user is not logged in after loading
-        toast.error('Please log in to join a watchroom'); // Use react-hot-toast
+      if (loading) return;
+      if (!user) { 
+        toast.error('Please log in to join a watchroom'); 
         localStorage.setItem('redirectAfterLogin', window.location.pathname);
         navigate('/login');
         return;
@@ -83,14 +77,12 @@ function Watchroom() {
           setRoom(roomRes.data);
           setMessages(messagesRes.data);
 
-          // Configure and connect Socket.IO
           socket.auth = { token: localStorage.getItem('token') };
-          if (!socket.connected) { // Connect only if not already connected
+          if (!socket.connected) {
               socket.connect();
           }
           socket.emit('joinRoom', { roomId: id, username: user.username });
 
-          // Socket.IO event listeners
           socket.on('chat:message', handleMessage);
           socket.on('room:systemMessage', handleSystemMessage);
           socket.on('room:usersUpdate', ({ count }) => setUsersWatching(count));
@@ -106,7 +98,7 @@ function Watchroom() {
         } else {
           toast.error('Failed to load room or messages.');
           console.error('Watchroom Init Error:', err);
-          navigate('/error'); // Navigate to error page on other failures
+          navigate('/error'); 
         }
       } finally {
         if (isMounted) {
@@ -115,27 +107,24 @@ function Watchroom() {
       }
     };
 
-    if (user && !loading) { // Only fetch if user data is available and not loading
+    if (user && !loading) { 
       init();
     }
 
     return () => {
       isMounted = false;
-      // Clean up Socket.IO listeners
       socket.off('chat:message', handleMessage);
       socket.off('room:systemMessage', handleSystemMessage);
       socket.off('room:usersUpdate');
       socket.off('video:play', handlePlay);
       socket.off('video:pause', handlePause);
       socket.off('video:seek', handleSeek);
-      // Only disconnect if this component is the last one using the socket (optional, depends on app structure)
       if (socket.connected) {
           socket.disconnect();
       }
     };
-  }, [id, user, loading, navigate]); // Dependencies adjusted based on combined logic
+  }, [id, user, loading, navigate]); 
 
-  // Fetch active rooms every few seconds
   useEffect(() => {
     const fetchActiveRooms = async () => {
       try {
@@ -147,12 +136,11 @@ function Watchroom() {
     };
 
     fetchActiveRooms();
-    const interval = setInterval(fetchActiveRooms, 10000); // every 10 seconds
+    const interval = setInterval(fetchActiveRooms, 10000); 
 
     return () => clearInterval(interval);
   }, []);
 
-  // Message Handlers
   const handleMessage = (message) => {
     setMessages((prev) => [...prev, message]);
   };
@@ -161,22 +149,20 @@ function Watchroom() {
     setMessages((prev) => [...prev, { system: true, message, timestamp }]);
   };
 
-  // MODIFIED: Video Control Handlers to set/reset isProcessingRemoteCommand flag
   const handlePlay = ({ time }) => {
     if (playerRef.current) {
-      isProcessingRemoteCommand.current = true; // Set flag
+      isProcessingRemoteCommand.current = true; 
       playerRef.current.seekTo(time, true);
       playerRef.current.playVideo();
-      // Reset flag after a short delay to allow player state to settle
       setTimeout(() => {
         isProcessingRemoteCommand.current = false;
-      }, 200); // 200ms usually sufficient for player to update state
+      }, 200);
     }
   };
 
   const handlePause = ({ time }) => {
     if (playerRef.current) {
-      isProcessingRemoteCommand.current = true; // Set flag
+      isProcessingRemoteCommand.current = true; 
       playerRef.current.seekTo(time, true);
       playerRef.current.pauseVideo();
       setTimeout(() => {
@@ -187,7 +173,7 @@ function Watchroom() {
 
   const handleSeek = ({ time }) => {
     if (playerRef.current) {
-      isProcessingRemoteCommand.current = true; // Set flag
+      isProcessingRemoteCommand.current = true; 
       playerRef.current.seekTo(time, true);
       setTimeout(() => {
         isProcessingRemoteCommand.current = false;
@@ -195,17 +181,14 @@ function Watchroom() {
     }
   };
 
-  // Auto-scroll chat messages
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
     }
   }, [messages]);
 
-  // MODIFIED YOUTUBE PLAYER EFFECT FOR ROBUSTNESS AND CORRECT URL
   useEffect(() => {
     if (!room || !room.videoId) {
-      // If no videoId, ensure any existing player is destroyed
       if (playerRef.current && typeof playerRef.current.destroy === 'function') {
         playerRef.current.destroy();
         playerRef.current = null;
@@ -213,13 +196,11 @@ function Watchroom() {
       return;
     }
 
-    // This internal function handles the creation/re-creation of the player
     const createOrUpdatePlayer = () => {
-      // If a player instance already exists, destroy it before creating a new one
       if (playerRef.current && typeof playerRef.current.destroy === 'function') {
         console.log("Destroying existing YouTube player instance before creating new.");
         playerRef.current.destroy();
-        playerRef.current = null; // Clear the ref
+        playerRef.current = null; 
       }
 
       console.log("Creating new YouTube player instance for videoId:", room.videoId);
@@ -231,10 +212,10 @@ function Watchroom() {
         playerVars: {
           enablejsapi: 1,
           origin: window.location.origin,
-          controls: 1, // Ensure controls are visible for user interaction
-          modestbranding: 1, // Less YouTube branding
-          rel: 0, // Prevent related videos from showing at end
-          autoplay: 0 // Crucial: Start paused, let sync handle play
+          controls: 1,
+          modestbranding: 1,
+          rel: 0,
+          autoplay: 0
         },
       });
     };
@@ -339,7 +320,7 @@ function Watchroom() {
   };
 
   // Loading/Error states (adapted from first code's style)
-  if (loading || !user) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-screen text-lg font-semibold text-violet-400 bg-gray-900">
         Authenticating...
