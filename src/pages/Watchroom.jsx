@@ -23,7 +23,7 @@ const Loader = () => (
 function Watchroom() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user, loading } = useContext(AuthContext); 
+  const { user, loading } = useContext(AuthContext);
   const [room, setRoom] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
@@ -31,14 +31,11 @@ function Watchroom() {
   const [copied, setCopied] = useState(false);
   const [activeRooms, setActiveRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
   const messagesEndRef = useRef(null);
   const playerRef = useRef(null);
   const headerRef = useRef(null);
   const [headerHeight, setHeaderHeight] = useState(0);
-
   const isProcessingRemoteCommand = useRef(false);
-
   const inviteLink = `${window.location.origin}/watchroom/${id}`;
 
   useEffect(() => {
@@ -47,10 +44,8 @@ function Watchroom() {
         setHeaderHeight(headerRef.current.offsetHeight);
       }
     };
-
     measureHeader();
     window.addEventListener('resize', measureHeader);
-
     return () => {
       window.removeEventListener('resize', measureHeader);
     };
@@ -62,8 +57,9 @@ function Watchroom() {
 
     const init = async () => {
       if (loading) return;
-      if (!user) { 
-        toast.error('Please log in to join a watchroom'); 
+
+      if (!user) {
+        toast.error('Please log in to join a watchroom');
         localStorage.setItem('redirectAfterLogin', window.location.pathname);
         navigate('/login');
         return;
@@ -72,17 +68,14 @@ function Watchroom() {
       try {
         const roomRes = await apiClient.get(`/rooms/${id}`);
         const messagesRes = await apiClient.get(`/rooms/${id}/messages`);
-
         if (isMounted) {
           setRoom(roomRes.data);
           setMessages(messagesRes.data);
-
           socket.auth = { token: localStorage.getItem('token') };
           if (!socket.connected) {
-              socket.connect();
+            socket.connect();
           }
           socket.emit('joinRoom', { roomId: id, username: user.username });
-
           socket.on('chat:message', handleMessage);
           socket.on('room:systemMessage', handleSystemMessage);
           socket.on('room:usersUpdate', ({ count }) => setUsersWatching(count));
@@ -91,14 +84,16 @@ function Watchroom() {
           socket.on('video:seek', handleSeek);
         }
       } catch (err) {
-        if (err.response?.status === 401) {
-          toast.error('Session expired. Please log in again.');
-          localStorage.setItem('redirectAfterLogin', window.location.pathname);
-          navigate('/login');
-        } else {
-          toast.error('Failed to load room or messages.');
-          console.error('Watchroom Init Error:', err);
-          navigate('/error'); 
+        if (isMounted) {
+          if (err.response?.status === 401) {
+            toast.error('Session expired. Please log in again.');
+            localStorage.setItem('redirectAfterLogin', window.location.pathname);
+            navigate('/login');
+          } else {
+            toast.error('Failed to load room or messages.');
+            console.error('Watchroom Init Error:', err);
+            navigate('/error');
+          }
         }
       } finally {
         if (isMounted) {
@@ -107,7 +102,7 @@ function Watchroom() {
       }
     };
 
-    if (user && !loading) { 
+    if (!loading) {
       init();
     }
 
@@ -120,10 +115,10 @@ function Watchroom() {
       socket.off('video:pause', handlePause);
       socket.off('video:seek', handleSeek);
       if (socket.connected) {
-          socket.disconnect();
+        socket.disconnect();
       }
     };
-  }, [id, user, loading, navigate]); 
+  }, [id, user, loading, navigate]);
 
   useEffect(() => {
     const fetchActiveRooms = async () => {
@@ -134,10 +129,8 @@ function Watchroom() {
         console.error('Failed to get active rooms:', err);
       }
     };
-
     fetchActiveRooms();
-    const interval = setInterval(fetchActiveRooms, 10000); 
-
+    const interval = setInterval(fetchActiveRooms, 10000);
     return () => clearInterval(interval);
   }, []);
 
@@ -151,7 +144,7 @@ function Watchroom() {
 
   const handlePlay = ({ time }) => {
     if (playerRef.current) {
-      isProcessingRemoteCommand.current = true; 
+      isProcessingRemoteCommand.current = true;
       playerRef.current.seekTo(time, true);
       playerRef.current.playVideo();
       setTimeout(() => {
@@ -162,7 +155,7 @@ function Watchroom() {
 
   const handlePause = ({ time }) => {
     if (playerRef.current) {
-      isProcessingRemoteCommand.current = true; 
+      isProcessingRemoteCommand.current = true;
       playerRef.current.seekTo(time, true);
       playerRef.current.pauseVideo();
       setTimeout(() => {
@@ -173,7 +166,7 @@ function Watchroom() {
 
   const handleSeek = ({ time }) => {
     if (playerRef.current) {
-      isProcessingRemoteCommand.current = true; 
+      isProcessingRemoteCommand.current = true;
       playerRef.current.seekTo(time, true);
       setTimeout(() => {
         isProcessingRemoteCommand.current = false;
@@ -198,12 +191,9 @@ function Watchroom() {
 
     const createOrUpdatePlayer = () => {
       if (playerRef.current && typeof playerRef.current.destroy === 'function') {
-        console.log("Destroying existing YouTube player instance before creating new.");
         playerRef.current.destroy();
-        playerRef.current = null; 
+        playerRef.current = null;
       }
-
-      console.log("Creating new YouTube player instance for videoId:", room.videoId);
       playerRef.current = new window.YT.Player('player', {
         videoId: room.videoId,
         events: {
@@ -220,86 +210,56 @@ function Watchroom() {
       });
     };
 
-    // Define onPlayerStateChange within this effect scope
     const onPlayerStateChange = (event) => {
       const player = playerRef.current;
       if (!player) return;
 
-      // IMPORTANT: If we are currently processing a remote command, DO NOT emit
-      // This prevents feedback loops where reacting to a remote command causes us to re-emit
       if (isProcessingRemoteCommand.current) {
-        console.log("Skipping emit: Player state changed due to remote command.");
         return;
       }
 
       const time = player.getCurrentTime();
-
       if (event.data === window.YT.PlayerState.PLAYING) {
-        console.log("Local user initiated PLAY. Emitting video:play");
         socket.emit('video:play', { roomId: id, time });
-      } else if (event.data === window.YT.PlayerState.PAUSED) { // Use else if for distinct states
-        console.log("Local user initiated PAUSE. Emitting video:pause");
+      } else if (event.data === window.YT.PlayerState.PAUSED) {
         socket.emit('video:pause', { roomId: id, time });
       }
-      // REMOVED: Logic for emitting 'video:seek' on BUFFERING state change.
-      // This was causing the self-inflicted seek loops.
-      // User-initiated seeks should be triggered by explicit UI interactions (e.g., seek bar).
-      // Remote seeks are handled by handleSeek, which sets the flag.
-      // If the player buffers due to network, we generally don't want to re-emit a seek.
     };
 
-    // Load the YouTube IFrame API script if not already loaded
-    // This ensures the script is loaded ONCE per page load
     if (!window.YT || !window.YT.Player) {
-        const tag = document.createElement('script');
-        tag.src = 'https://www.youtube.com/iframe_api'; // CORRECTED YouTube API URL
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-        // Set the global callback if the API isn't ready yet
-        // Ensure this is only set ONCE to avoid multiple calls if script reloads.
-        // It should be defined before the script potentially calls it.
-        if (!window.onYouTubeIframeAPIReady) {
-            window.onYouTubeIframeAPIReady = () => {
-                console.log("YouTube Iframe API script loaded and ready.");
-                createOrUpdatePlayer(); // Now that API is ready, create the player
-            };
-        }
+      if (!window.onYouTubeIframeAPIReady) {
+        window.onYouTubeIframeAPIReady = () => {
+          createOrUpdatePlayer();
+        };
+      }
     } else {
-        // If API is already loaded, create/update player directly
-        console.log("YouTube API already loaded, creating/updating player directly.");
-        createOrUpdatePlayer();
+      createOrUpdatePlayer();
     }
 
-    // Cleanup function: This runs when the component unmounts or before the effect re-runs
     return () => {
       if (playerRef.current && typeof playerRef.current.destroy === 'function') {
-        console.log("Component unmounting or effect re-running, destroying YouTube player.");
         playerRef.current.destroy();
-        playerRef.current = null; // Important: Clear the ref after destroying
+        playerRef.current = null;
       }
-      // Generally, don't nullify global window.onYouTubeIframeAPIReady unless you are 100% sure
-      // this is the only component setting it and you need it reset globally.
-      // Leaving it defined often causes no harm if the player management within createOrUpdatePlayer is robust.
-      // window.onYouTubeIframeAPIReady = null;
     };
-  }, [room, id]); // Dependencies: Effect re-runs if 'room' data or 'id' changes
+  }, [room, id]);
 
-  // Send message function (from second code's logic)
   const sendMessage = () => {
     if (!newMessage.trim()) return;
-
-    // Emit message to server, server will broadcast it and save it to DB
     socket.emit('chat:message', {
       roomId: id,
       message: newMessage,
       userId: user.id,
       username: user.username,
     });
-    setNewMessage(''); // Clear input
+    setNewMessage('');
   };
 
-  // Copy link function (from second code, with first code's toast styling)
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(inviteLink);
@@ -312,20 +272,22 @@ function Watchroom() {
     }
   };
 
-  // Leave room function
   const leaveRoom = () => {
-    socket.emit('leaveRoom', { roomId: id, username: user.username }); // Notify server of leave
-    socket.disconnect(); // Disconnect socket
-    navigate('/dashboard'); // Navigate away
+    socket.emit('leaveRoom', { roomId: id, username: user.username });
+    socket.disconnect();
+    navigate('/dashboard');
   };
 
-  // Loading/Error states (adapted from first code's style)
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen text-lg font-semibold text-violet-400 bg-gray-900">
         Authenticating...
       </div>
     );
+  }
+
+  if (!user) {
+    return null;
   }
 
   if (!room) {
@@ -344,17 +306,14 @@ function Watchroom() {
       {isLoading && <Loader />}
       <div className="min-h-screen bg-gray-900 p-4 sm:p-6 text-gray-100">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6">
-          {/* Video and Room Info */}
           <div className="md:col-span-3">
-            <div className="mb-4" ref={headerRef}> {/* Header ref from second code */}
+            <div className="mb-4" ref={headerRef}>
               <h1 className="text-2xl sm:text-3xl font-bold text-violet-400 mb-2">{room.name}</h1>
               <p className="text-sm text-gray-400 mb-1">
                 Created by: <span className="font-semibold text-violet-300">{room.createdBy?.username || 'Unknown'}</span>
               </p>
               <p className="text-sm text-gray-400 mb-1">Created at: {createdAt}</p>
-              {/* Display users watching from second code */}
               <p className="text-sm text-violet-400 font-semibold mb-3">{usersWatching} watching</p>
-
               <div className="flex items-center gap-2 mb-6">
                 <input
                   type="text"
@@ -376,10 +335,8 @@ function Watchroom() {
                 </button>
               </div>
             </div>
-
             {videoId ? (
               <div className="relative w-full aspect-video rounded-lg shadow-lg overflow-hidden">
-                {/* This div is where the YouTube Iframe API will embed the player */}
                 <div id="player" className="absolute top-0 left-0 w-full h-full"></div>
               </div>
             ) : (
@@ -387,7 +344,6 @@ function Watchroom() {
             )}
           </div>
 
-          {/* Chat Sidebar */}
           <div className="bg-gray-800 p-4 rounded-lg shadow-lg md:col-span-1 flex flex-col"
             style={{ height: headerHeight ? `calc(100vh - ${headerHeight}px - 4rem)` : 'auto' }}
           >
@@ -463,12 +419,11 @@ function Watchroom() {
             </div>
           </div>
 
-          {/* Active Rooms Sidebar */}
           <div className="md:col-span-1 bg-gray-800 p-4 rounded-lg shadow-lg mt-6 md:mt-0">
             <h2 className="text-xl font-bold text-violet-400 mb-3">Other Active Rooms</h2>
             {activeRooms.rooms && activeRooms.rooms.length > 0 ? (
               activeRooms.rooms
-                .filter(r => r.roomId !== id) // Filter out the current room
+                .filter(r => r.roomId !== id)
                 .map(r => (
                   <div
                     key={r.roomId}
