@@ -152,7 +152,7 @@ export default function Home() {
       <section className="lg:h-[70vh] sm:h-screen ">
         <div className="flex flex-col justify-center items-center my-10 mb-20">
           <p className="text-3xl font-medium">What Our  <span className="text-purple-500 italic">Users Say✦✦</span></p>
-          <p className="text-lg text-gray-500"> <span className="text-purple-500 font-bold">—</span>Join thousands of happy users who've made SyncWatch their go-to platform</p>
+          <p className="text-lg text-gray-500"> <span className="text-purple-500 font-bold">—</span>Join thousands of happy users who've made Bambi Watch their go-to platform</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 m-6">
@@ -167,7 +167,7 @@ export default function Home() {
               <p className="ml-auto text-4xl text-purple-600">𖹭</p>
             </div>
             <p className="text-gray-700 text-sm leading-relaxed">
-              "SyncWatch has been a game-changer for our family movie nights!
+              "Bambi Watch has been a game-changer for our family movie nights!
               <br /> My kids are in college now, but we still watch movies together every Friday. <br /> It feels like we're all in the same room."
             </p>
           </div>
@@ -184,7 +184,7 @@ export default function Home() {
             </div>
             <p className="text-gray-700 text-sm leading-relaxed">
               "Perfect for long-distance relationships! <br />
-              My girlfriend and I use SyncWatch every weekend. The chat feature <br />
+              My girlfriend and I use Bambi Watch every weekend. The chat feature <br />
               makes it feel like we're cuddling on the couch together."
             </p>
           </div>
@@ -201,7 +201,7 @@ export default function Home() {
             </div>
             <p className="text-gray-700 text-sm leading-relaxed">
               "Our friend group scattered across different cities after college, <br />
-              but SyncWatch keeps us connected. <br />
+              but Bambi Watch keeps us connected. <br />
               We have weekly movie nights that feel just like old times!"
             </p>
           </div>
