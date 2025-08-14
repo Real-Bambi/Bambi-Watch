@@ -206,7 +206,7 @@ export default function Profile() {
           <div className="w-64 rounded-lg overflow-hidden shadow-md ">
             <img src={Movie2Image} alt="" className="w-64 object-cover h-96" />
             <div className="p-4">
-              <h2 className="font-bold text-lg text-white">Kpop Demon Hunter</h2>
+              <h2 className="font-bold text-lg text-white">Kpop Demon Hunters</h2>
               <p className="text-sm text-gray-600">Animation . 2025</p>
             </div>
           </div>
